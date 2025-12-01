@@ -1,0 +1,43 @@
+"use client";
+
+import { Box, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+
+// import MainLayout from '@/layouts/MainLayout'
+import { useRouter } from 'next/navigation'
+import HeaderFooterLayout from '@/layouts/header-footer-layout/HeaderFooterLayout';
+
+const NotFoundPage = () => {
+    const [countdown, setCountdown] = useState(3)
+    const router = useRouter()
+
+    useEffect(() => {
+        // Set up the countdown timer
+        const timer = setInterval(() => {
+            setCountdown((prevCount) => {
+                if (prevCount === 1) {
+                    // Redirect when countdown reaches 1
+                    clearInterval(timer)
+                    // Use a setTimeout to delay the push, avoiding the render issue
+                    setTimeout(() => router.push('/home'), 0)
+                }
+                return prevCount - 1
+            })
+        }, 1000)
+
+        return () => clearInterval(timer) // Cleanup timer on component unmount
+    }, [router])
+
+    return (
+        <HeaderFooterLayout>
+            <Box height={'100vh'} display='flex' alignItems="center" justifyContent="center" width={'100%'}>
+                <Box className="center">
+                    <Typography variant='h4'>The page you are asking for is Not Found. It may be under construction.</Typography>
+                    <Typography variant='h5'>Redirecting to homepage in {countdown} seconds.</Typography>
+                </Box>
+            </Box>
+        </HeaderFooterLayout>
+    )
+}
+
+export default NotFoundPage

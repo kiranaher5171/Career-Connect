@@ -1,0 +1,95 @@
+ 
+/* ag grid table css started */
+.ag-root-wrapper {
+  border-radius: 0px !important;
+  border: none !important;
+}
+
+.ag-cell-wrapper {
+  height: 100% !important;
+}
+
+.ag-header-viewport {
+  background-color: var(--primary) !important;
+  color: var(--white) !important;
+  font-family: var(--font-playfair) !important;
+}
+
+.ag-header-cell-text {
+  color: var(--white) !important;
+  font-size: 13px !important;
+  line-height: normal !important;
+}
+
+.ag-cell-focus:focus-within {
+  border-color: transparent !important;
+}
+
+.ag-row:hover {
+  background-color: transparent !important;
+}
+
+.ag-row::before {
+  background-color: transparent !important;
+}
+
+.ag-row-odd::before {
+  background-color: #f9f9f9 !important;
+}
+
+.ag-cell-value {
+  font-size: 11px !important;
+  font-weight: 500 !important; 
+}
+
+/* Vertical column borders */
+.ag-header-cell,
+.ag-header-group-cell {
+  border-right: 1px solid #ffffff !important;
+}
+
+/* .ag-header-cell:last-child,
+.ag-header-group-cell:last-child {
+  border-right: none !important;
+}
+
+.ag-cell {
+  border-right: 1px solid #d9d9d9 !important;
+}
+
+.ag-cell:last-child {
+  border-right: none !important;
+}  */
+
+.green-btn {
+  color: green;
+  font-weight: 500 !important;
+  background-color: #d6ffd6 !important;
+  padding: 4px 12px !important;
+  border-radius: 4px !important;
+  min-width: 120px !important;
+}
+
+.yellow-btn {
+  color: #D0B404;
+  font-weight: 500 !important;
+  background-color: #fcf3cc !important;
+  padding: 4px 12px !important;
+  border-radius: 4px !important; 
+}
+
+.red-btn {
+  color: red;
+  font-weight: 500 !important;
+  background-color: #ffecef !important;
+  padding: 4px 12px !important;
+  border-radius: 4px !important; 
+}
+
+.orange-btn {
+  color: #ff6100 !important;
+  font-weight: 500 !important;
+  background-color: #fff0e6 !important;
+  padding: 4px 12px !important;
+  border-radius: 4px !important; 
+}

@@ -1,0 +1,179 @@
+#form-bg {
+  position: relative;
+  background-image: url(/assets/auth/auth-bg.png) !important;
+  background-position: center !important;
+  min-height: 100vh !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  display: grid !important;
+  place-items: center !important;
+  background-blend-mode: overlay !important;
+  background-color: #0000008c  !important;
+}
+
+.auth-logo {
+  width: auto !important;
+  height: 70px !important;
+  user-select: none !important;
+}
+.auth-gif {
+  width: 100px !important;
+  height: auto !important;
+}
+
+.form-card {
+  position: relative !important;
+  /* background-color: #ffffffc4 !important; */
+  background-color: #fffc !important;
+  height: 100vh !important;
+  display: grid;
+  place-content: center;
+  padding: 40px !important;
+  text-align: center !important;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+
+  padding-left: 12% !important;
+  padding-right: 12% !important;
+}
+
+#form-bg .main-container {
+  height: 100vh !important;
+  align-items: center !important;
+  display: flex;
+  min-width: 85% !important;
+  max-width: 85% !important;
+}
+
+.form-heading {
+  color: var(--primary) !important;
+  letter-spacing: 6px !important;
+  font-weight: 700 !important;
+  font-family: "Outfit", sans-serif !important;
+  font-size: 25px !important;
+  line-height: normal !important;
+}
+
+.form-textfield .MuiOutlinedInput-root {
+  padding-left: 4px !important;
+  background-color: var(--white) !important;
+  border-radius: 26px !important;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
+}
+
+.form-textfield .MuiOutlinedInput-input {
+  color: black !important;
+  font-family: "Outfit", sans-serif !important;
+}
+
+.form-textfield .MuiSvgIcon-root {
+  font-size: 24px !important;
+}
+
+.datepicker .MuiSvgIcon-root {
+  font-size: 16px !important;
+}
+
+.form-textfield .MuiOutlinedInput-notchedOutline {
+  border-color: transparent !important;
+  border-width: 2px !important;
+}
+
+.form-textfield .MuiOutlinedInput-input {
+  padding: 12px !important;
+}
+
+.form-textfield .MuiInputBase-adornedStart {
+  padding-left: 12px !important;
+}
+
+.form-textfield ::placeholder {
+  color: #bfbfbf !important;
+  font-weight: 400 !important;
+  opacity: 1 !important;
+}
+
+.form-textfield.select-role .MuiOutlinedInput-root{
+  padding: 0px !important;
+}
+
+
+.form-textfield.select-role .MuiInputAdornment-root{
+  margin-left: 20px !important;
+  margin-right: 0px !important;
+}
+.auth-btn {
+  font-size: 18px !important;
+  text-transform: none !important;
+  line-height: normal !important;
+  padding: 14px 20px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  background: var(--primary) !important;
+  color:var(--white) !important;
+  font-family: "Outfit", sans-serif !important;
+}
+
+/*  */
+.form-side-text {
+  margin-bottom: 20vh !important;
+  position: absolute !important;
+  bottom: 0px !important;
+}
+
+.main-txt {
+  text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.4), 0px 8px 13px rgba(0, 0, 0, 0.1),
+    0px 18px 23px rgba(0, 0, 0, 0.1) !important;
+  font-size: 50px !important;
+  line-height: normal !important;
+  font-family: "Outfit", sans-serif !important;
+  font-weight: bold !important;
+  color: var(--white) !important;
+}
+
+.sub-txt {
+  font-size: 20px !important;
+  line-height: normal !important;
+  font-family: "Outfit", sans-serif !important;
+  font-weight: 400 !important;
+  color: var(--white) !important;
+}
+
+.decorator {
+  min-width: 300px !important;
+  height: auto !important;
+  position: absolute !important;
+  left: 0px !important;
+  width: 35% !important;
+  bottom: 235px !important;
+}
+
+.form-back-btn {
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  color: var(--secondary) !important;
+}
+
+@media (max-width: 900px) {
+  .form-side-text {
+    display: none !important;
+  }
+  .decorator{
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-card {
+    padding: 20px !important;
+  }
+  .auth-logo {
+    height: 60px !important;
+  }
+  #form-bg .main-container {
+    min-width: 100% !important;
+    max-width: 100% !important;
+    margin: 0px !important;
+    padding: 8px !important;
+  }
+}

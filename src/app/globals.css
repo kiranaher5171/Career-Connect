@@ -1,0 +1,65 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  padding: 0 !important;
+  margin: 0 !important;
+  position: relative !important;
+  font-family: var(--font-poppins) !important;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.MuiTooltip-tooltip {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  background-color: black !important;
+}
+
+.MuiTypography-root {
+  font-family: inherit !important;
+}
+
+.checkbx.MuiCheckbox-root.Mui-checked {
+  color: #1930ab !important;
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  display: flex !important;
+  align-items: flex-end !important;
+  background: #1930ab;
+  background: linear-gradient( 80deg, rgb(0, 5, 32) 0%, rgba(0, 0, 0, 0.5) 40%, rgba(6, 6, 6, 0.3) 70%, rgba(0, 0, 0, 0.5) 100% );
+}
+
+.smHeroSection {
+  position: relative !important;
+  min-height: 350px !important;
+  background-color: #f2f2f2 !important;
+  width: 100% !important;
+  min-height: 30vh !important;
+}
+
+.smHeroSection .content {
+  position: relative !important;
+  z-index: 1 !important;
+  height: 100% !important;
+  padding: 50px 0px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  min-height: 30vh !important;
+}

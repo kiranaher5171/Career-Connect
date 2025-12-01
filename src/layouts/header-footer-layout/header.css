@@ -1,0 +1,306 @@
+/* #Appbar { 
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px !important;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(16.6px);
+  -webkit-backdrop-filter: blur(16.6px);
+  z-index: 1300 !important;
+  height: 65PX !important;
+  display: grid !important;
+  align-items: center !important;
+ } */
+
+/* #Appbar {
+  z-index: 1300 !important;
+  background-color: transparent;
+  transition: background-color 0.4s ease;
+} */
+
+#Appbar {
+  z-index: 1300 !important;
+  box-shadow: none !important;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease;
+  padding-right: 0px !important;
+  background-color: rgba(10, 10, 20, 0.94) !important;
+  background: rgba(10, 10, 20, 0.94) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25), 0 1.5px 6px 0 rgba(0,0,0,0.15) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(40, 40, 60, 0.18) !important;
+  transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1) !important;
+}
+
+/* Home page header - transparent by default */
+#Appbar.home-page {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: none !important;
+}
+
+/* Home page header - add background when scrolled */
+#Appbar.home-page.scrolled {
+  background-color: rgba(10, 10, 20, 0.94) !important;
+  background: rgba(10, 10, 20, 0.94) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25), 0 1.5px 6px 0 rgba(0,0,0,0.15) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(40, 40, 60, 0.18) !important;
+  transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1) !important;
+}
+
+#Appbar.scrolled {
+  background-color: rgba(10, 10, 20, 0.94) !important;
+  background: rgba(10, 10, 20, 0.94) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25), 0 1.5px 6px 0 rgba(0,0,0,0.15) !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  border-bottom: 1px solid rgba(40, 40, 60, 0.18) !important;
+  transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1) !important;
+}
+
+
+
+.Appbar_height {
+  min-height: 50px !important;
+}
+
+.appbar_logo {
+  color: transparent;
+  width: 130px !important;
+  height: auto !important;
+}
+
+.menus {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: var(--white) !important;
+  text-transform: none !important;
+  letter-spacing: 1px !important;
+  /* margin: 0px 5px !important; */
+}
+
+.menus:hover {
+  background-color: inherit !important;
+  color: var(--secondary) !important;
+}
+
+.menus.active {
+  color: var(--secondary) !important;
+  font-weight: 500 !important;
+  border-bottom: 2px solid;
+  padding-bottom: 3px;
+  border-radius: 0px;
+}
+
+/* .MuiDrawer-paper {
+  background-color: #ffffff !important;
+  min-width: 240px !important;
+} */
+
+.gradient-bg {
+  background: #ff7e5f;
+  /* fallback */
+  background: -moz-linear-gradient(
+    34deg,
+    rgba(255, 126, 95, 1) 0%,
+    rgba(254, 180, 123, 1) 100%
+  );
+  background: -webkit-linear-gradient(
+    34deg,
+    rgba(255, 126, 95, 1) 0%,
+    rgba(254, 180, 123, 1) 100%
+  );
+  background: linear-gradient(
+    34deg,
+    rgba(255, 126, 95, 1) 0%,
+    rgba(254, 180, 123, 1) 100%
+  );
+  color: white;
+} 
+
+.footer {
+  transition: background-color 0.4s ease;
+  background: rgba(10, 10, 20, 0.94);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25), 0 1.5px 6px 0 rgba(0,0,0,0.15);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid rgba(40, 40, 60, 0.18);
+  transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1);
+  padding-top: 60px !important;
+  padding-bottom: 30px !important;
+  position: relative;
+  height: auto;
+}
+
+.footer-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.footer-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.brdBtm {
+  border-bottom: 2px solid var(--white) !important;
+}
+
+.footerMenu {
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  line-height: 18px !important;
+  color: var(--white) !important;
+  text-transform: none !important;
+  padding-left: 0 !important;
+  justify-content: flex-start !important;
+  transition: all 0.5s ease-in !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.menuLine {
+  height: 2px !important;
+  width: 0 !important;
+  border-radius: 26px !important;
+  background-color: var(--white) !important;
+  margin-right: 4px !important;
+  transition: all 0.2s ease-in !important;
+}
+
+.footerMenu:hover .menuLine {
+  width: 25px !important;
+}
+
+.footerMenu2:hover .menuLine {
+  width: 25px !important;
+}
+
+.footerFormAllignment {
+  position: relative !important;
+  margin-bottom: -260px !important;
+  z-index: 999 !important;
+}
+
+.locationImg {
+  background-size: contain !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  height: 55px !important;
+  width: 55px !important;
+  border-radius: 50% !important;
+  border: 2px solid transparent !important;
+}
+
+.locationName {
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  line-height: 18px !important;
+  opacity: 0.8 !important;
+  color: var(--white) !important;
+}
+
+.locationCard:hover .locationImg {
+  border: 2px solid var(--secondary) !important;
+}
+
+.locationCard:hover .locationName {
+  font-weight: 600 !important;
+}
+
+.footer-brand {
+  text-align: center;
+}
+
+.footnote {
+  margin-top: 10px;
+  opacity: 0.85;
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.footer-title {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-link {
+  color: black;
+  text-decoration: none;
+  display: inline-block;
+  transform: translateZ(0);
+  transition: color 180ms ease, transform 220ms ease;
+}
+
+.footer-link:hover {
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 14px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+@media (max-width: 768px) {
+  .footer-columns {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+
+.social-icons .MuiIconButton-root {
+  color: var(--white) !important;
+}
+
+.footer-heading {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+}
+
+#footer .MuiButton-root:hover {
+  background-color: transparent !important;
+}
+
+#footer .MuiButtonBase-root:hover {
+  background-color: transparent !important;
+} 
+ .profile-options.MuiButtonBase-root.MuiButton-root {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: normal !important;
+  text-transform: capitalize !important;
+  color: var(--primary) !important;
+  padding: 8px 18px !important;
+  padding-left: 14px !important;
+  min-width: 120px !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  border-radius: 0px !important;
+  border-left: 4px solid transparent !important;
+}
+.profile-options.MuiButtonBase-root.MuiButton-root:hover {
+  border-left: 4px solid var(--secondary) !important;
+  background-color: transparent !important;
+  color: var(--secondary) !important;
+}

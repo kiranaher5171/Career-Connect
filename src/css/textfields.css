@@ -1,0 +1,109 @@
+.textfield .MuiOutlinedInput-root {
+  padding-left: 0px !important;
+}
+
+.textfield .MuiOutlinedInput-input {
+  color: var(--black) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 10px 12px !important;
+}
+
+.textfield .MuiSvgIcon-root {
+  color: var(--primary) !important;
+}
+
+.textfield ::placeholder {
+  color: var(--gry-txt) !important;
+}
+.textfield .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary);
+  border-width: 1px !important;
+}
+
+.textfield .MuiAutocomplete-input {
+  padding: 10px 12px !important;
+}
+
+.MuiAutocomplete-option {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--black) !important;
+}
+
+.MuiAutocomplete-listbox{
+  max-height: 250px !important;
+  overflow: auto !important;
+}
+
+.auto-complete .MuiInputBase-root {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  height: 38px !important;
+  overflow: hidden !important;
+}
+
+.textfield .datepicker .MuiOutlinedInput-input {
+  padding: 4px 12px !important;
+  padding-right: 0px !important;
+}
+
+.datepicker .MuiFormControl-root {
+  width: 100% !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary);
+  border-width: 2px !important;
+}
+
+.MuiInputBase-multiline {
+  padding: 0px !important;
+}
+
+.textfield .MuiInputLabel-outlined.MuiInputLabel-shrink {
+  transform: translate(12px, -8px) scale(0.75);
+  font-size: 14px !important;
+  color: var(--primary);
+  font-weight: 500 !important;
+}
+
+.textfield .MuiInputLabel-outlined {
+  transform: translate(12px, 10px) scale(1);
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+.country-select .MuiInputBase-adornedEnd {
+  padding-right: 22px !important;
+}
+
+.datepicker .MuiFormControl-root {
+  width: 100% !important;
+}
+
+.MuiOutlinedInput-input.Mui-disabled {
+  color: #252c32 !important;
+  -webkit-text-fill-color: #252c32 !important;
+}
+
+
+.multicheck .MuiButtonBase-root.MuiChip-root{
+  height: 23px !important;
+  font-size: 12px !important;
+}
+
+.multicheck .MuiButtonBase-root.MuiChip-root .MuiSvgIcon-root{
+  /* height: 25px !important; */
+  font-size: 15px !important;
+}
+
+.multicheck .MuiChip-label{
+  padding-left: 8px !important;
+}
+
+.MuiOutlinedInput-root input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+}
