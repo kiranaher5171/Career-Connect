@@ -4,4 +4,5 @@ export { default as DeleteDialog } from './DeleteDialog';
 export { default as SuccessDialog } from './SuccessDialog';
 export { default as VideoDialog } from './VideoDialog';
 export { default as LogoutConfirmationDialog } from './LogoutConfirmationDialog';
+export { default as ReferFriendDialog } from './ReferFriendDialog';
 

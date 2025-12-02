@@ -45,6 +45,7 @@ import { Snackbar, Alert, Skeleton } from "@mui/material";
 import Link from "next/link"; 
 import Image from "next/image";
 import SearchIcon from "@mui/icons-material/Search";
+import HeaderFooterLayout from "@/layouts/header-footer-layout/HeaderFooterLayout";
 
 const FindJobsPage = () => {
   const [jobs, setJobs] = useState([]);
