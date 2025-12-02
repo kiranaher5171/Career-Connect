@@ -257,6 +257,13 @@ main {
   display: none !important;
 }
 
+.whitebx{
+  background-color: white !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  border: 2px solid #d9d9d991 !important; 
+}
+
 @media (max-width: 550px) {
   .child-content {
     padding-bottom: 60px !important;

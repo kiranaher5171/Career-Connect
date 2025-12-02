@@ -1,31 +1,32 @@
- .link-text-btn {
-   text-transform: capitalize !important;
-   color: #1930ab !important;
-   text-decoration: underline !important;
-   font-size: 13px !important;
-   line-height: normal !important;
-   background-color: transparent !important;
-   font-weight: 500 !important;
-   letter-spacing: 3% !important;
- }
+.link-text-btn {
+  text-transform: capitalize !important;
+  color: #1930ab !important;
+  text-decoration: underline !important;
+  font-size: 13px !important;
+  line-height: normal !important;
+  background-color: transparent !important;
+  font-weight: 500 !important;
+  letter-spacing: 3% !important;
+}
 
- /* Buttons CSS Started */
- .primary-action-btn {
-     background-color: var(--primary) !important;
-   border: 2px solid var(--primary) !important;
-   border-radius: 6px !important;
-   color: var(--white) !important;
-   font-size: 13px !important;
-   line-height: normal !important;
-   font-weight: 500 !important;
-   text-transform: none !important;
-   padding: 6px 25px !important;
-   box-shadow: none !important;
-   letter-spacing: 3% !important;
- }
+/* Buttons CSS Started */
+.primary-action-btn {
+    background-color: var(--primary) !important;
+  border: 2px solid var(--primary) !important;
+  border-radius: 6px !important;
+  color: var(--white) !important;
+  font-size: 13px !important;
+  line-height: normal !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  padding: 6px 25px !important;
+  box-shadow: none !important;
+  letter-spacing: 3% !important;
+  min-width: 150px !important;
+}
 
- .secondary-action-btn {
-  background-color: var(--secondary) !important;
+.secondary-action-btn {
+ background-color: var(--secondary) !important;
 border: 2px solid var(--secondary) !important;
 border-radius: 6px !important;
 color: var(--white) !important;
@@ -36,78 +37,83 @@ text-transform: none !important;
 padding: 6px 25px !important;
 box-shadow: none !important;
 letter-spacing: 3% !important;
+min-width: 150px !important;
 }
 
- .primary-outline-btn {
-   background-color: transparent !important;
-   border: 2px solid var(--primary) !important;
-   border-radius: 6px !important;
-   color: var(--primary) !important;
-   font-size: 13px !important;
-   line-height: normal !important;
-   font-weight: 500 !important;
-   text-transform: none !important;
-   padding: 6px 25px !important;
-   letter-spacing: 3% !important;
- }
-
- .gray-action-btn {
-   background-color: var(--dgray) !important;
-   border: 1px solid var(--dgray) !important;
-   border-radius: 6px !important;
-   color: var(--white) !important;
-   font-size: 13px !important;
-   line-height: normal !important;
-   font-weight: 500 !important;
-   text-transform: none !important;
-   padding: 6px 25px !important;
-   box-shadow: none !important;
-   letter-spacing: 3% !important;
- }
-
- .secondary-outline-btn {
-   background-color: transparent !important;
-   border: 2px solid var(--secondary) !important;
-   border-radius: 6px !important;
-   color: var(--secondary) !important;
-   font-size: 13px !important;
-   line-height: normal !important;
-   font-weight: 500 !important;
-   text-transform: none !important;
-   padding: 6px 25px !important;
-   letter-spacing: 3% !important;
- }
-
- .gray-outline-btn {
-   background-color: transparent !important;
-   border: 2px solid var(--dgray) !important;
-   border-radius: 6px !important;
-   color: var(--dgray) !important;
-   font-size: 13px !important;
-   line-height: normal !important;
-   font-weight: 500 !important;
-   text-transform: none !important;
-   padding: 6px 25px !important;
-   letter-spacing: 3% !important;
- }
-
- .ico-btn {
-  height: 30px !important;
-  width: 30px !important;
-  background-color: var(--white) !important;
-  border: 1px solid #d5dbff !important;
+.primary-outline-btn {
+  background-color: transparent !important;
+  border: 2px solid var(--primary) !important;
   border-radius: 6px !important;
+  color: var(--primary) !important;
+  font-size: 13px !important;
+  line-height: normal !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  padding: 6px 25px !important;
+  letter-spacing: 3% !important;
+  min-width: 150px !important;
+}
+
+.gray-action-btn {
+  background-color: var(--dgray) !important;
+  border: 1px solid var(--dgray) !important;
+  border-radius: 6px !important;
+  color: var(--white) !important;
+  font-size: 13px !important;
+  line-height: normal !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  padding: 6px 25px !important;
+  box-shadow: none !important;
+  letter-spacing: 3% !important;
+  min-width: 150px !important;
+}
+
+.secondary-outline-btn {
+  background-color: transparent !important;
+  border: 2px solid var(--secondary) !important;
+  border-radius: 6px !important;
+  color: var(--secondary) !important;
+  font-size: 13px !important;
+  line-height: normal !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  padding: 6px 25px !important;
+  letter-spacing: 3% !important;
+  min-width: 150px !important;
+}
+
+.gray-outline-btn {
+  background-color: transparent !important;
+  border: 2px solid var(--dgray) !important;
+  border-radius: 6px !important;
+  color: var(--dgray) !important;
+  font-size: 13px !important;
+  line-height: normal !important;
+  font-weight: 500 !important;
+  text-transform: none !important;
+  padding: 6px 25px !important;
+  letter-spacing: 3% !important;
+  min-width: 150px !important;
+}
+
+.ico-btn {
+ height: 30px !important;
+ width: 30px !important;
+ background-color: var(--white) !important;
+ border: 1px solid #d5dbff !important;
+ border-radius: 6px !important;
 }
 
 .back-btn {
-  text-transform: capitalize !important;
-  color: #1930ab !important;
-  text-decoration: none !important;
-  font-size: 13px !important;
-  line-height: normal !important;
-  background-color: transparent !important;
-  font-weight: 500 !important;
-  letter-spacing: 3% !important;
+ text-transform: capitalize !important;
+ color: #1930ab !important;
+ text-decoration: none !important;
+ font-size: 13px !important;
+ line-height: normal !important;
+ background-color: transparent !important;
+ font-weight: 500 !important;
+ letter-spacing: 3% !important;
 }
 
 .signin-btn{

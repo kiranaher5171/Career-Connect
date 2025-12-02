@@ -10,14 +10,16 @@
 }
 
 .textfield .MuiSvgIcon-root {
-  color: var(--primary) !important;
+  color: var(--black) !important;
+  font-size: 20px !important;
+  opacity: 0.8 !important;
 }
 
 .textfield ::placeholder {
   color: var(--gry-txt) !important;
 }
 .textfield .MuiOutlinedInput-notchedOutline {
-  border-color: var(--primary);
+  border-color: #d1d5db !important;
   border-width: 1px !important;
 }
 
@@ -31,20 +33,13 @@
   color: var(--black) !important;
 }
 
-.MuiAutocomplete-listbox{
-  max-height: 250px !important;
-  overflow: auto !important;
-}
-
 .auto-complete .MuiInputBase-root {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
-  height: 38px !important;
-  overflow: hidden !important;
 }
 
 .textfield .datepicker .MuiOutlinedInput-input {
-  padding: 4px 12px !important;
+  padding: 10px 12px !important;
   padding-right: 0px !important;
 }
 
@@ -53,7 +48,7 @@
 }
 
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-  border-color: var(--primary);
+  border-color: var(--primary) !important;
   border-width: 2px !important;
 }
 
@@ -87,23 +82,103 @@
   -webkit-text-fill-color: #252c32 !important;
 }
 
-
-.multicheck .MuiButtonBase-root.MuiChip-root{
-  height: 23px !important;
+.textfield.adorn .MuiInputAdornment-root .MuiTypography-root {
   font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: normal !important;
+  color: var(--secondary) !important;
+  padding: 12px !important;
+  border-right: 2px solid var(--gry-txt) !important;
 }
 
-.multicheck .MuiButtonBase-root.MuiChip-root .MuiSvgIcon-root{
-  /* height: 25px !important; */
-  font-size: 15px !important;
+.textfield.adorn ::placeholder {
+  color: #9ca3af !important;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+}
+.textfield.adorn .MuiOutlinedInput-input {
+  padding-left: 0px !important;
 }
 
-.multicheck .MuiChip-label{
-  padding-left: 8px !important;
+.auto-complete.noClear .MuiAutocomplete-clearIndicator {
+  display: none !important;
+}
+.auto-complete.noClear .MuiOutlinedInput-root {
+  padding-right: 39px !important;
 }
 
+.label {
+  font-size: 13px !important;
+  line-height: normal !important;
+  font-weight: 500 !important;
+  color: #586166 !important;
+  padding-bottom: 4px !important;
+}
+
+.MuiInput-root::after {
+  border-bottom: 2px solid var(--primary) !important;
+}
+
+.textfield.standard .MuiInputBase-input {
+  color: var(--black) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  padding: 8px 0px !important;
+}
+
+.multi-select .MuiAutocomplete-tag {
+  display: none !important;
+}
+.multi-select .MuiChip-label {
+  padding: 0px 12px !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: var(--text) !important;
+}
+
+.multi-select .custom-select .MuiOutlinedInput-input {
+  color: var(--black) !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  padding: 4px 8px !important;
+  padding-right: 30px !important;
+}
+
+.multi-select .custom-select .MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}
+
+.MuiPopover-paper.MuiMenu-paper {
+min-width: 100px !important;
+  width: fit-content !important;
+}
+
+.MuiPopover-paper.MuiMenu-paper .MuiMenuItem-root {
+  font-size: 13px !important;
+  line-height: normal !important;
+  font-weight: 500 !important;
+  width: fit-content !important;
+  min-width: 100px !important;
+} 
+
+/* Ensure MUI input root also has white background on autofill */
 .MuiOutlinedInput-root input:-webkit-autofill {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
   -webkit-text-fill-color: #000000 !important;
   background-color: #ffffff !important;
+}
+
+.filter-chips.MuiButtonBase-root.MuiChip-root{
+  background-color: var(--primary) !important;
+  color: #fff !important;
+  padding: 6px 8px !important;
+  height: auto !important;
+  font-size: 12px !important;
+  line-height: normal !important;
+  border-radius: 6px !important;
+}
+
+.filter-chips.MuiButtonBase-root.MuiChip-root .MuiChip-deleteIcon{
+  margin-left: 4px !important;
+  color: #ffffff !important;
 }

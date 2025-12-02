@@ -93,3 +93,26 @@
   padding: 4px 12px !important;
   border-radius: 4px !important; 
 }
+
+.table-search ::placeholder {
+  letter-spacing: 3px !important;
+  color: #bfbfbf !important;
+}
+
+.table-search .MuiOutlinedInput-input {
+  font-size: 12px !important;
+  line-height: normal !important;
+  color: var(--black) !important;
+  padding: 10px !important;
+  padding-left: 0px !important;
+}
+
+.table-search .MuiSvgIcon-root {
+  color: #bfbfbf !important;
+}
+
+.table-search
+  .MuiOutlinedInput-root.Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary) !important;
+}

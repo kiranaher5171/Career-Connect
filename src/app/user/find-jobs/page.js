@@ -1,15 +1,20 @@
 "use client"; 
-import { Container, Box, Typography, Grid, Card, CardContent, Button, Stack } from '@mui/material';
+import { Container, Box, Typography, Grid, Card, CardContent, Button, Stack, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import HeaderFooterLayout from '@/layouts/header-footer-layout/HeaderFooterLayout';
 import SearchIcon from '@mui/icons-material/Search';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const FindJobs = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [locationQuery, setLocationQuery] = useState('');
 
   useEffect(() => {
     // Check if user is logged in
@@ -28,7 +33,42 @@ const FindJobs = () => {
     }
 
     setUser(parsedUser);
+    fetchJobs();
   }, [router]);
+
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/jobs?status=active');
+      const data = await response.json();
+      
+      if (data.success) {
+        setJobs(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    // Filter jobs based on search query
+    // This is a simple client-side filter, you can enhance it with API filtering
+    fetchJobs();
+  };
+
+  const filteredJobs = jobs.filter(job => {
+    const matchesSearch = !searchQuery || 
+      job.jobRole?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.designation?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.jobDescription?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesLocation = !locationQuery || 
+      job.location?.toLowerCase().includes(locationQuery.toLowerCase());
+    
+    return matchesSearch && matchesLocation;
+  });
 
   if (!user) {
     return null;
@@ -57,6 +97,9 @@ const FindJobs = () => {
                   <input
                     type="text"
                     placeholder="Job title, keywords, or company"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     style={{
                       border: 'none',
                       outline: 'none',
@@ -76,6 +119,9 @@ const FindJobs = () => {
                   <input
                     type="text"
                     placeholder="City, state, or remote"
+                    value={locationQuery}
+                    onChange={(e) => setLocationQuery(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                     style={{
                       border: 'none',
                       outline: 'none',
@@ -90,6 +136,7 @@ const FindJobs = () => {
                 variant="contained"
                 className="primary-action-btn"
                 sx={{ mt: { xs: 0, md: 3 }, minWidth: 120 }}
+                onClick={handleSearch}
                 disableRipple
               >
                 Search
@@ -98,199 +145,89 @@ const FindJobs = () => {
           </Card>
 
           {/* Job Listings */}
-          <Grid container spacing={3}>
-            {/* Sample Job Card 1 */}
-            <Grid size={{ lg: 6, md: 6, xs: 12 }}>
-              <Card sx={{ height: '100%', '&:hover': { boxShadow: 4 } }}>
-                <CardContent>
-                  <Stack direction="row" spacing={2} alignItems="start">
-                    <Box
-                      sx={{
-                        width: 60,
-                        height: 60,
-                        borderRadius: 1,
-                        bgcolor: 'primary.main',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white'
-                      }}
-                    >
-                      <WorkOutlineIcon />
-                    </Box>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="h6" className="fw6" gutterBottom>
-                        Software Developer
-                      </Typography>
-                      <Typography variant="body2" className="text" gutterBottom>
-                        Tech Company Inc.
-                      </Typography>
-                      <Stack direction="row" spacing={2} mt={1}>
-                        <Typography variant="caption" className="text">
-                          <LocationOnIcon sx={{ fontSize: 16, verticalAlign: 'middle' }} /> Remote
-                        </Typography>
-                        <Typography variant="caption" className="text">
-                          Full-time
-                        </Typography>
+          {loading ? (
+            <Box display="flex" justifyContent="center" alignItems="center" py={8}>
+              <CircularProgress />
+            </Box>
+          ) : filteredJobs.length === 0 ? (
+            <Box textAlign="center" py={8}>
+              <Typography variant="h6" className="text" gutterBottom>
+                No jobs found
+              </Typography>
+              <Typography variant="body2" className="text-secondary">
+                Try adjusting your search criteria
+              </Typography>
+            </Box>
+          ) : (
+            <Grid container spacing={3}>
+              {filteredJobs.map((job) => (
+                <Grid key={job._id} size={{ lg: 6, md: 6, xs: 12 }}>
+                  <Card sx={{ height: '100%', '&:hover': { boxShadow: 4 }, cursor: 'pointer' }}>
+                    <CardContent>
+                      <Stack direction="row" spacing={2} alignItems="start">
+                        <Box
+                          sx={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: 1,
+                            bgcolor: 'primary.main',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white'
+                          }}
+                        >
+                          <WorkOutlineIcon />
+                        </Box>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography variant="h6" className="fw6" gutterBottom>
+                            {job.jobRole || 'N/A'}
+                          </Typography>
+                          <Typography variant="body2" className="text" gutterBottom>
+                            {job.designation || job.teamName || 'CareerConnect'}
+                          </Typography>
+                          <Stack direction="row" spacing={2} mt={1} flexWrap="wrap" gap={1}>
+                            {job.location && (
+                              <Typography variant="caption" className="text">
+                                <LocationOnIcon sx={{ fontSize: 16, verticalAlign: 'middle', mr: 0.5 }} />
+                                {job.location}
+                              </Typography>
+                            )}
+                            {job.jobType && (
+                              <Typography variant="caption" className="text">
+                                <AccessTimeIcon sx={{ fontSize: 16, verticalAlign: 'middle', mr: 0.5 }} />
+                                {job.jobType}
+                              </Typography>
+                            )}
+                            {job.experience && (
+                              <Typography variant="caption" className="text">
+                                {job.experience}
+                              </Typography>
+                            )}
+                            {job.salary && (
+                              <Typography variant="caption" className="text">
+                                {job.salary}
+                              </Typography>
+                            )}
+                          </Stack>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            className="primary-outline-btn"
+                            sx={{ mt: 2 }}
+                            onClick={() => router.push(`/user/find-jobs/${job.slug || job._id}`)}
+                            disableRipple
+                          >
+                            View Details
+                          </Button>
+                        </Box>
                       </Stack>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{ mt: 2 }}
-                        disableRipple
-                      >
-                        View Details
-                      </Button>
-                    </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
-
-            {/* Sample Job Card 2 */}
-            <Grid size={{ lg: 6, md: 6, xs: 12 }}>
-              <Card sx={{ height: '100%', '&:hover': { boxShadow: 4 } }}>
-                <CardContent>
-                  <Stack direction="row" spacing={2} alignItems="start">
-                    <Box
-                      sx={{
-                        width: 60,
-                        height: 60,
-                        borderRadius: 1,
-                        bgcolor: 'primary.main',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white'
-                      }}
-                    >
-                      <WorkOutlineIcon />
-                    </Box>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="h6" className="fw6" gutterBottom>
-                        Product Manager
-                      </Typography>
-                      <Typography variant="body2" className="text" gutterBottom>
-                        StartupXYZ
-                      </Typography>
-                      <Stack direction="row" spacing={2} mt={1}>
-                        <Typography variant="caption" className="text">
-                          <LocationOnIcon sx={{ fontSize: 16, verticalAlign: 'middle' }} /> New York, NY
-                        </Typography>
-                        <Typography variant="caption" className="text">
-                          Full-time
-                        </Typography>
-                      </Stack>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{ mt: 2 }}
-                        disableRipple
-                      >
-                        View Details
-                      </Button>
-                    </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Sample Job Card 3 */}
-            <Grid size={{ lg: 6, md: 6, xs: 12 }}>
-              <Card sx={{ height: '100%', '&:hover': { boxShadow: 4 } }}>
-                <CardContent>
-                  <Stack direction="row" spacing={2} alignItems="start">
-                    <Box
-                      sx={{
-                        width: 60,
-                        height: 60,
-                        borderRadius: 1,
-                        bgcolor: 'primary.main',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white'
-                      }}
-                    >
-                      <WorkOutlineIcon />
-                    </Box>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="h6" className="fw6" gutterBottom>
-                        UX Designer
-                      </Typography>
-                      <Typography variant="body2" className="text" gutterBottom>
-                        Design Studio
-                      </Typography>
-                      <Stack direction="row" spacing={2} mt={1}>
-                        <Typography variant="caption" className="text">
-                          <LocationOnIcon sx={{ fontSize: 16, verticalAlign: 'middle' }} /> San Francisco, CA
-                        </Typography>
-                        <Typography variant="caption" className="text">
-                          Contract
-                        </Typography>
-                      </Stack>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{ mt: 2 }}
-                        disableRipple
-                      >
-                        View Details
-                      </Button>
-                    </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Sample Job Card 4 */}
-            <Grid size={{ lg: 6, md: 6, xs: 12 }}>
-              <Card sx={{ height: '100%', '&:hover': { boxShadow: 4 } }}>
-                <CardContent>
-                  <Stack direction="row" spacing={2} alignItems="start">
-                    <Box
-                      sx={{
-                        width: 60,
-                        height: 60,
-                        borderRadius: 1,
-                        bgcolor: 'primary.main',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white'
-                      }}
-                    >
-                      <WorkOutlineIcon />
-                    </Box>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="h6" className="fw6" gutterBottom>
-                        Data Analyst
-                      </Typography>
-                      <Typography variant="body2" className="text" gutterBottom>
-                        Analytics Corp
-                      </Typography>
-                      <Stack direction="row" spacing={2} mt={1}>
-                        <Typography variant="caption" className="text">
-                          <LocationOnIcon sx={{ fontSize: 16, verticalAlign: 'middle' }} /> Chicago, IL
-                        </Typography>
-                        <Typography variant="caption" className="text">
-                          Full-time
-                        </Typography>
-                      </Stack>
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{ mt: 2 }}
-                        disableRipple
-                      >
-                        View Details
-                      </Button>
-                    </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-          </Grid>
+          )}
         </Box>
       </Container>
     </HeaderFooterLayout>
