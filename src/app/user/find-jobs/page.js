@@ -138,7 +138,7 @@ const FindJobsPage = () => {
 
   const fetchSavedJobs = useCallback(async () => {
     try {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("token");
       if (!token) {
         return; // User not logged in
       }
@@ -381,7 +381,6 @@ const FindJobsPage = () => {
       filtered = filtered.filter(
         (job) =>
           job.jobRole?.toLowerCase().includes(searchLower) ||
-          job.companyName?.toLowerCase().includes(searchLower) ||
           job.designation?.toLowerCase().includes(searchLower) ||
           job.location?.toLowerCase().includes(searchLower)
       );
@@ -488,7 +487,7 @@ const FindJobsPage = () => {
 
   const handleSaveJob = useCallback(
     async (job) => {
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("token");
       if (!token) {
         setSnackbar({
           open: true,
@@ -794,7 +793,7 @@ const FindJobsPage = () => {
                       alignItems: 'center'
                     }}>
                       <TextField
-                        placeholder="Job title, keywords, or company"
+                        placeholder="Job title or keywords"
                         value={heroSearchQuery}
                         onChange={(e) => setHeroSearchQuery(e.target.value)}
                         onKeyPress={(e) => {

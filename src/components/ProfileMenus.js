@@ -19,7 +19,7 @@ import {
   IconButton,
   Button,
 } from "@mui/material";
-import { LogoutConfirmationDialog } from "@/components/dialogs";
+import { LogoutConfirmationDialog, SuccessDialog } from "@/components/dialogs";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -30,10 +30,11 @@ export default function ProfileMenus() {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const open = Boolean(anchorEl);
 
-  useEffect(() => {
-    // Get user data from localStorage
+  // Function to check and update auth state
+  const checkAuthState = () => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     
@@ -44,8 +45,38 @@ export default function ProfileMenus() {
         setRole(parsedUser.role);
       } catch (error) {
         console.error('Error parsing user data:', error);
+        setUser(null);
+        setRole(null);
       }
+    } else {
+      setUser(null);
+      setRole(null);
     }
+  };
+
+  useEffect(() => {
+    // Initial auth check
+    checkAuthState();
+
+    // Listen for storage changes (logout from other tabs/windows)
+    const handleStorageChange = (e) => {
+      if (e.key === 'token' || e.key === 'user') {
+        checkAuthState();
+      }
+    };
+
+    // Listen for custom logout event
+    const handleLogout = () => {
+      checkAuthState();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('userLogout', handleLogout);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogout', handleLogout);
+    };
   }, []);
   
   const handleClick = (event) => {
@@ -64,15 +95,28 @@ export default function ProfileMenus() {
   };
 
   const handleLogoutConfirm = () => {
+    // Close logout confirmation dialog first
     setLogoutDialogOpen(false);
-    // Small delay to ensure dialog closes before navigation
+    
+    // Small delay to ensure dialog closes before showing success
     setTimeout(() => {
       // Clear localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Redirect to home page after logout
-      window.location.href = "/";
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new Event('userLogout'));
+      // Clear state immediately
+      setUser(null);
+      setRole(null);
+      // Show success dialog
+      setSuccessDialogOpen(true);
     }, 100);
+  };
+
+  const handleSuccessDialogClose = () => {
+    setSuccessDialogOpen(false);
+    // Redirect to home page after closing success dialog
+    window.location.href = "/";
   };
 
   const handleLogoutCancel = () => {
@@ -273,6 +317,12 @@ export default function ProfileMenus() {
         open={logoutDialogOpen}
         onCancel={handleLogoutCancel}
         onConfirm={handleLogoutConfirm}
+      />
+
+      {/* Success Dialog */}
+      <SuccessDialog
+        open={successDialogOpen}
+        onClose={handleSuccessDialogClose}
       />
     </Box>
   );

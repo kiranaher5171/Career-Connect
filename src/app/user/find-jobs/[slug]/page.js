@@ -90,10 +90,10 @@ const JobDetailsPage = () => {
               Back to Jobs
             </Button>
             <Card sx={{ p: 4, textAlign: "center" }}>
-              <Typography variant="h5" className="fw6 text" gutterBottom>
+              <Typography variant="h6" className="fw5 black" gutterBottom>
                 {error || "Job not found"}
               </Typography>
-              <Typography variant="body1" className="text-secondary" sx={{ mb: 3 }}>
+              <Typography variant="body2" className="te4t-secondary" sx={{ mb: 3 }}>
                 The job you're looking for doesn't exist or has been removed.
               </Typography>
               <Button
@@ -147,11 +147,11 @@ const JobDetailsPage = () => {
                         primary={job.jobRole || "N/A"}
                         secondary={job.designation || ""}
                         primaryTypographyProps={{ 
-                          variant: "h3", 
-                          className: "fw6 text" 
+                          variant: "h6", 
+              className: "fw6 text" 
                         }}
                         secondaryTypographyProps={{ 
-                          variant: "body1", 
+                          variant: "body2", 
                           className: "text-secondary" 
                         }}
                       />
@@ -168,10 +168,10 @@ const JobDetailsPage = () => {
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <GroupsIcon className="primary" sx={{ fontSize: 20 }} />
                           <Box>
-                            <Typography variant="caption" className="text-secondary">
+                            <Typography variant="h6" className="fw5 black">
                               Team Name
                             </Typography>
-                            <Typography variant="body1" className="fw5 text">
+                            <Typography variant="body2" className="fw4 text">
                               {job.teamName}
                             </Typography>
                           </Box>
@@ -183,10 +183,10 @@ const JobDetailsPage = () => {
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <AccessTimeIcon className="primary" sx={{ fontSize: 20 }} />
                           <Box>
-                            <Typography variant="caption" className="text-secondary">
+                            <Typography variant="h6" className="fw5 black">
                               Job Type
                             </Typography>
-                            <Typography variant="body1" className="fw5 text">
+                            <Typography variant="body2" className="fw4 text">
                               {job.jobType}
                             </Typography>
                           </Box>
@@ -198,10 +198,10 @@ const JobDetailsPage = () => {
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <LocationOnIcon className="primary" sx={{ fontSize: 20 }} />
                           <Box>
-                            <Typography variant="caption" className="text-secondary">
+                            <Typography variant="h6" className="fw5 black">
                               Location
                             </Typography>
-                            <Typography variant="body1" className="fw5 text">
+                            <Typography variant="body2" className="fw4 text">
                               {job.location}
                             </Typography>
                           </Box>
@@ -213,10 +213,10 @@ const JobDetailsPage = () => {
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <WorkIcon className="primary" sx={{ fontSize: 20 }} />
                           <Box>
-                            <Typography variant="caption" className="text-secondary">
+                            <Typography variant="h6" className="fw5 black">
                               Experience
                             </Typography>
-                            <Typography variant="body1" className="fw5 text">
+                            <Typography variant="body2" className="fw4 text">
                               {job.experience}
                             </Typography>
                           </Box>
@@ -228,10 +228,10 @@ const JobDetailsPage = () => {
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                           <AttachMoneyIcon className="primary" sx={{ fontSize: 20 }} />
                           <Box>
-                            <Typography variant="caption" className="text-secondary">
+                            <Typography variant="h6" className="fw5 black">
                               Salary
                             </Typography>
-                            <Typography variant="body1" className="fw5 text">
+                            <Typography variant="body2" className="fw4 text">
                               {job.salary}
                             </Typography>
                           </Box>
@@ -248,7 +248,7 @@ const JobDetailsPage = () => {
           {skillsArray.length > 0 && (
             <Card sx={{ p: 4, mb: 3 }}>
               <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
-                <Typography variant="h5" className="fw6 text" gutterBottom sx={{ mb: 2 }}>
+                <Typography variant="h6" className="fw5 black" gutterBottom sx={{ mb: 2 }}>
                   Professional Skills / Required Skills
                 </Typography>
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -256,8 +256,17 @@ const JobDetailsPage = () => {
                     <Chip
                       key={index}
                       label={skill}
-                      className="primary"
-                      sx={{ backgroundColor: "var(--primary-light)", color: "var(--primary)" }}
+                      sx={{
+                        fontSize: "13px !important",
+                        padding: "4px 8px !important",
+                        borderRadius: "6px !important",
+                        backgroundColor: "#e0f7fa",
+                        color: "var(--text)",
+                        border: "1px solid #b2ebf2",
+                        "&:hover": {
+                          backgroundColor: "#b2ebf2",
+                        },
+                      }}
                     />
                   ))}
                 </Box>
@@ -269,10 +278,10 @@ const JobDetailsPage = () => {
           {job.keyResponsibilities && (
             <Card sx={{ p: 4, mb: 3 }}>
               <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
-                <Typography variant="h5" className="fw6 text" gutterBottom sx={{ mb: 2 }}>
+                <Typography variant="h6" className="fw5 black" gutterBottom sx={{ mb: 2 }}>
                   Key Responsibilities
                 </Typography>
-                <Typography variant="body1" className="text" sx={{ whiteSpace: 'pre-line' }}>
+                <Typography variant="body2" className="te4t" sx={{ whiteSpace: 'pre-line' }}>
                   {job.keyResponsibilities}
                 </Typography>
               </CardContent>
@@ -283,10 +292,10 @@ const JobDetailsPage = () => {
           {job.minimumQualifications && (
             <Card sx={{ p: 4, mb: 3 }}>
               <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
-                <Typography variant="h5" className="fw6 text" gutterBottom sx={{ mb: 2 }}>
+                <Typography variant="h6" className="fw5 black" gutterBottom sx={{ mb: 2 }}>
                   Minimum Qualifications
                 </Typography>
-                <Typography variant="body1" className="text" sx={{ whiteSpace: 'pre-line' }}>
+                <Typography variant="body2" className="te4t" sx={{ whiteSpace: 'pre-line' }}>
                   {job.minimumQualifications}
                 </Typography>
               </CardContent>
@@ -297,10 +306,10 @@ const JobDetailsPage = () => {
           {job.benefits && (
             <Card sx={{ p: 4, mb: 3 }}>
               <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
-                <Typography variant="h5" className="fw6 text" gutterBottom sx={{ mb: 2 }}>
+                <Typography variant="h6" className="fw5 black" gutterBottom sx={{ mb: 2 }}>
                   Benefits
                 </Typography>
-                <Typography variant="body1" className="text" sx={{ whiteSpace: 'pre-line' }}>
+                <Typography variant="body2" className="te4t" sx={{ whiteSpace: 'pre-line' }}>
                   {job.benefits}
                 </Typography>
               </CardContent>
@@ -311,10 +320,10 @@ const JobDetailsPage = () => {
           {job.jobDescription && (
             <Card sx={{ p: 4, mb: 3 }}>
               <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
-                <Typography variant="h5" className="fw6 text" gutterBottom sx={{ mb: 3 }}>
+                <Typography variant="h6" className="fw5 black" gutterBottom sx={{ mb: 3 }}>
                   Job Description
                 </Typography>
-                <Typography variant="body1" className="text" sx={{ whiteSpace: 'pre-line', lineHeight: 1.8 }}>
+                <Typography variant="body2" className="te4t" sx={{ whiteSpace: 'pre-line', lineHeight: 1.8 }}>
                   {job.jobDescription}
                 </Typography>
               </CardContent>

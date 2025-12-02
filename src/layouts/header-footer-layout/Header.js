@@ -35,9 +35,8 @@ export default function Header() {
   const [loading, setLoading] = React.useState(true);
   const [profileAnchor, setProfileAnchor] = React.useState(null);
 
-  React.useEffect(() => {
-    setMounted(true);
-    // Check authentication from localStorage
+  // Function to check and update auth state
+  const checkAuthState = React.useCallback(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     
@@ -48,9 +47,35 @@ export default function Header() {
         setRole(parsedUser.role);
       } catch (error) {
         console.error('Error parsing user data:', error);
+        setUser(null);
+        setRole(null);
       }
+    } else {
+      setUser(null);
+      setRole(null);
     }
     setLoading(false);
+  }, []);
+
+  React.useEffect(() => {
+    setMounted(true);
+    // Initial auth check
+    checkAuthState();
+
+    // Listen for storage changes (logout from other tabs/windows)
+    const handleStorageChange = (e) => {
+      if (e.key === 'token' || e.key === 'user') {
+        checkAuthState();
+      }
+    };
+
+    // Listen for custom logout event
+    const handleLogout = () => {
+      checkAuthState();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('userLogout', handleLogout);
 
     const handleScroll = () => {
       if (typeof window === 'undefined') return;
@@ -67,8 +92,13 @@ export default function Header() {
     handleScroll();
     
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [pathname]);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLogout', handleLogout);
+    };
+  }, [pathname, checkAuthState]);
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
@@ -103,7 +133,6 @@ export default function Header() {
     { label: "Manage Jobs", href: "/admin/jobs" },
     { label: "Manage Users", href: "/admin/manage-users" },
     { label: "Applications", href: "/admin/applications" },
-    { label: "Companies", href: "/admin/companies" },
     { label: "Analytics", href: "/admin/analytics" },
     { label: "Referrals", href: "/admin/referrals" },
   ];

@@ -10,23 +10,52 @@ const AdminDashboard = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    // Check if user is logged in
+  const checkAuth = () => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
 
     if (!token || !userData) {
       router.push('/auth/login');
-      return;
+      return false;
     }
 
-    const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== 'admin') {
+    try {
+      const parsedUser = JSON.parse(userData);
+      if (parsedUser.role !== 'admin') {
+        router.push('/auth/login');
+        return false;
+      }
+      setUser(parsedUser);
+      return true;
+    } catch (error) {
+      console.error('Error parsing user data:', error);
       router.push('/auth/login');
-      return;
+      return false;
     }
+  };
 
-    setUser(parsedUser);
+  useEffect(() => {
+    // Initial auth check
+    checkAuth();
+
+    // Listen for logout events and storage changes
+    const handleLogout = () => {
+      router.push('/auth/login');
+    };
+
+    const handleStorageChange = (e) => {
+      if (e.key === 'token' || e.key === 'user') {
+        checkAuth();
+      }
+    };
+
+    window.addEventListener('userLogout', handleLogout);
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('userLogout', handleLogout);
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, [router]);
 
   if (!user) {

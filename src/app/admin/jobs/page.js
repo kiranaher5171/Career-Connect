@@ -30,6 +30,7 @@ import { MdDeleteOutline } from 'react-icons/md';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { FaEye } from 'react-icons/fa';
 import TableSkeleton from '@/components/table_components/TableSkeleton';
+import { DeleteDialog, SuccessDialog } from '@/components/dialogs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -43,6 +44,10 @@ const ManageJobs = () => {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [viewingJob, setViewingJob] = useState(null);
   const [editingJob, setEditingJob] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
+  const [jobToDeleteTitle, setJobToDeleteTitle] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [formData, setFormData] = useState({
     jobRole: '',
@@ -61,8 +66,9 @@ const ManageJobs = () => {
   });
 
   useEffect(() => {
-    checkAuth();
-    fetchJobs();
+    if (checkAuth()) {
+      fetchJobs();
+    }
   }, []);
 
   // Filter jobs based on search query
@@ -93,15 +99,49 @@ const ManageJobs = () => {
     
     if (!token || !userData) {
       router.push('/auth/login');
-      return;
+      return false;
     }
 
-    const parsedUser = JSON.parse(userData);
-    if (parsedUser.role !== 'admin') {
+    try {
+      const parsedUser = JSON.parse(userData);
+      if (parsedUser.role !== 'admin') {
+        router.push('/auth/login');
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error parsing user data:', error);
       router.push('/auth/login');
-      return;
+      return false;
     }
   };
+
+  // Listen for logout events and route changes
+  useEffect(() => {
+    const handleLogout = () => {
+      router.push('/auth/login');
+    };
+
+    const handleRouteChange = () => {
+      if (!checkAuth()) {
+        return;
+      }
+    };
+
+    window.addEventListener('userLogout', handleLogout);
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'token' || e.key === 'user') {
+        handleRouteChange();
+      }
+    });
+
+    // Check auth on mount and when pathname changes
+    handleRouteChange();
+
+    return () => {
+      window.removeEventListener('userLogout', handleLogout);
+    };
+  }, [router]);
 
   const fetchJobs = async () => {
     try {
@@ -221,11 +261,16 @@ const ManageJobs = () => {
       const data = await response.json();
 
       if (data.success) {
-        showSnackbar(
-          editingJob ? 'Job updated successfully' : 'Job created successfully',
-          'success'
-        );
+        // Close the add/edit dialog first
         handleCloseDialog();
+        
+        // Small delay to ensure dialog closes before showing success
+        setTimeout(() => {
+          // Show success dialog
+          setSuccessDialogOpen(true);
+        }, 100);
+        
+        // Refresh jobs list
         fetchJobs();
       } else {
         showSnackbar(data.error || 'Failed to save job', 'error');
@@ -236,28 +281,56 @@ const ManageJobs = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this job?')) {
-      return;
-    }
+  const handleDelete = (job) => {
+    setJobToDelete(job._id);
+    setJobToDeleteTitle(job.jobRole || job.title || 'this job');
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!jobToDelete) return;
 
     try {
-      const response = await fetch(`/api/jobs/${id}`, {
+      const response = await fetch(`/api/jobs/${jobToDelete}`, {
         method: 'DELETE',
       });
 
       const data = await response.json();
 
       if (data.success) {
-        showSnackbar('Job deleted successfully', 'success');
+        // Close delete dialog first
+        setDeleteDialogOpen(false);
+        setJobToDelete(null);
+        setJobToDeleteTitle(null);
+        
+        // Show success dialog
+        setSuccessDialogOpen(true);
+        
+        // Refresh jobs list
         fetchJobs();
       } else {
+        setDeleteDialogOpen(false);
+        setJobToDelete(null);
+        setJobToDeleteTitle(null);
         showSnackbar(data.error || 'Failed to delete job', 'error');
       }
     } catch (error) {
       console.error('Error deleting job:', error);
+      setDeleteDialogOpen(false);
+      setJobToDelete(null);
+      setJobToDeleteTitle(null);
       showSnackbar('Failed to delete job', 'error');
     }
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
+    setJobToDelete(null);
+    setJobToDeleteTitle(null);
+  };
+
+  const handleSuccessDialogClose = () => {
+    setSuccessDialogOpen(false);
   };
 
   const showSnackbar = (message, severity) => {
@@ -319,7 +392,7 @@ const ManageJobs = () => {
             </IconButton>
             <IconButton
               size="small"
-              onClick={() => handleDelete(params.data._id)}
+              onClick={() => handleDelete(params.data)}
             >
               <MdDeleteOutline className="col1" />
             </IconButton>
@@ -344,35 +417,23 @@ const ManageJobs = () => {
   return (
     <HeaderFooterLayout>
       <Container maxWidth>
-        <Box className="page-content">
-          <Box display="flex" justifyContent="space-between" alignItems="center" my={4}>
-            <Typography variant="h4" className="fw6">
-              Manage Jobs
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => handleOpenDialog()}
-              className="primary-action-btn"
-              disableRipple
-            >
-              Add New Job
-            </Button>
-          </Box>
+        <Box className="page-content"> 
 
-          <Box className="whitebx">
+          <Box className="whitebx" mt={4}>
             {loading ? (
               <Box style={{ width: "100%", height: "50vh", overflow:"auto"  }}>
                 <TableSkeleton />
               </Box>
             ) : (
               <>
-                <Box style={{ width: "100%", height: "30vh" , overflow:"auto" }}>
-                  <Stack direction="row" justifyContent="space-between" mb={1}>
-                    <Box />
-                    <Box className="table-search">
+                <Box >
+                  <Stack direction="row" justifyContent="space-between" mb={2} sx={{ flexShrink: 0 }}>
+                    <Typography variant="h" className="fw6">
+                      Manage Jobs
+                    </Typography>
+                    <Box className="table-search" sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                       <TextField
-                        fullWidth
+                        sx={{ width: '300px' }}
                         placeholder="Search jobs by title, role, location, type, experience..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -384,17 +445,36 @@ const ManageJobs = () => {
                           ),
                         }}
                       />
+                      <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => handleOpenDialog()}
+                        className="primary-action-btn"
+                        disableRipple
+                      >
+                        Add New Job
+                      </Button>
                     </Box>
                   </Stack>
-                  <AgGridReact
-                    rowData={jobs}
-                    columnDefs={colDefs}
-                    defaultColDef={defaultColDef}
-                    getRowStyle={getRowStyle}
-                    headerHeight={40}
-                    rowHeight={40}
-                    domLayout="normal"
-                  />
+                  <Box sx={{ flex: 1, minHeight: 0 }}>
+                    <div
+                      className="ag-theme-alpine"
+                      style={{
+                        width: '100%',
+                        height: '50vh',
+                      }}
+                    >
+                      <AgGridReact
+                        rowData={jobs}
+                        columnDefs={colDefs}
+                        defaultColDef={defaultColDef}
+                        getRowStyle={getRowStyle}
+                        headerHeight={48}
+                        rowHeight={40}
+                        domLayout="normal"
+                      />
+                    </div>
+                  </Box>
                 </Box>
                 {/* Pagination and info section removed */}
               </>
@@ -688,90 +768,90 @@ const ManageJobs = () => {
             <Grid container spacing={2} sx={{ mt: 1 }}>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Job Title
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5 }}>
                     {viewingJob.jobRole || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Designation/Role
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5 }}>
                     {viewingJob.designation || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Team Name
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5 }}>
                     {viewingJob.teamName || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Job Type
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5 }}>
                     {viewingJob.jobType || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Location
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5 }}>
                     {viewingJob.location || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Experience Level
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5 }}>
                     {viewingJob.experience || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Salary
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5 }}>
                     {viewingJob.salary || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Status
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5, textTransform: 'capitalize' }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5, textTransform: 'capitalize' }}>
                     {viewingJob.status || 'active'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 12, md: 12, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Skills
                   </Typography>
-                  <Typography variant="body1" className="fw5 text" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" className="fw4 text" sx={{ mt: 0.5 }}>
                     {Array.isArray(viewingJob.skills) 
                       ? viewingJob.skills.join(', ') 
                       : (viewingJob.skills || 'N/A')}
@@ -780,40 +860,40 @@ const ManageJobs = () => {
               </Grid>
               <Grid size={{ lg: 12, md: 12, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Job Description
                   </Typography>
-                  <Typography variant="body1" className="text" sx={{ mt: 0.5, whiteSpace: 'pre-line' }}>
+                  <Typography variant="body2" className="text h4" sx={{ mt: 0.5, whiteSpace: 'pre-line' }}>
                     {viewingJob.jobDescription || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 12, md: 12, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Key Responsibilities
                   </Typography>
-                  <Typography variant="body1" className="text" sx={{ mt: 0.5, whiteSpace: 'pre-line' }}>
+                  <Typography variant="body2" className="text h4" sx={{ mt: 0.5, whiteSpace: 'pre-line' }}>
                     {viewingJob.keyResponsibilities || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 12, md: 12, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Minimum Qualifications
                   </Typography>
-                  <Typography variant="body1" className="text" sx={{ mt: 0.5, whiteSpace: 'pre-line' }}>
+                  <Typography variant="body2" className="text h4" sx={{ mt: 0.5, whiteSpace: 'pre-line' }}>
                     {viewingJob.minimumQualifications || 'N/A'}
                   </Typography>
                 </Box>
               </Grid>
               <Grid size={{ lg: 12, md: 12, sm: 12, xs: 12 }}>
                 <Box>
-                  <Typography variant="caption" className="text-secondary">
+                  <Typography variant="h6" className="h5 black">
                     Benefits
                   </Typography>
-                  <Typography variant="body1" className="text" sx={{ mt: 0.5, whiteSpace: 'pre-line' }}>
+                  <Typography variant="body2" className="text h4" sx={{ mt: 0.5, whiteSpace: 'pre-line' }}>
                     {viewingJob.benefits || 'N/A'}
                   </Typography>
                 </Box>
@@ -840,6 +920,20 @@ const ManageJobs = () => {
           )}
         </DialogActions>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteDialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteDialogClose}
+        onConfirm={handleDeleteConfirm}
+        jobTitle={jobToDeleteTitle}
+      />
+
+      {/* Success Dialog */}
+      <SuccessDialog
+        open={successDialogOpen}
+        onClose={handleSuccessDialogClose}
+      />
 
       {/* Snackbar */}
       <Snackbar

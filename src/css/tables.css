@@ -17,7 +17,8 @@
 
 .ag-header-cell-text {
   color: var(--white) !important;
-  font-size: 13px !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
   line-height: normal !important;
 }
 
@@ -38,8 +39,8 @@
 }
 
 .ag-cell-value {
-  font-size: 11px !important;
-  font-weight: 500 !important; 
+  font-size: 13px !important;
+  font-weight: 400 !important; 
 }
 
 /* Vertical column borders */
