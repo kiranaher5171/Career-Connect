@@ -39,7 +39,7 @@ const Footer = () => {
                                     <Box className="social-icons">
 
                                         <Box mb={10}>
-                                            <Link href="/home">
+                                            <Link href="/">
                                                 {/* <Image
                                                     src={logo}
                                                     alt="logo"

@@ -86,7 +86,7 @@ export default function Header() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     // Redirect to home page after logout
-    window.location.href = "/home";
+    window.location.href = "/";
   };
 
   const handleProfileClick = (event) => {
@@ -99,26 +99,28 @@ export default function Header() {
 
   // Admin menu items (Home removed - logo links to home)
   const adminMenuItems = [
-    { label: "Admin Dashboard", href: "/admin/dashboard" },
+    { label: "Dashboard", href: "/admin/dashboard" },
     { label: "Manage Jobs", href: "/admin/jobs" },
     { label: "Manage Users", href: "/admin/manage-users" },
-    { label: "Saved Jobs", href: "/admin/saved-jobs" },
-    { label: "Referrals", href: "/admin/referrals" },
     { label: "Applications", href: "/admin/applications" },
-    { label: "Settings", href: "/admin/settings" },
+    { label: "Companies", href: "/admin/companies" },
+    { label: "Analytics", href: "/admin/analytics" },
+    { label: "Referrals", href: "/admin/referrals" },
   ];
 
   // User menu items (Home removed - logo links to home)
   const userMenuItems = [
-    { label: "Find Jobs", href: "/users/jobs" },
-    { label: "My Applications", href: "/my-applications" },
-    { label: "Saved Jobs", href: "/saved-jobs" },
+    { label: "Find Jobs", href: "/user/find-jobs" },
+    { label: "My Applications", href: "/user/my-applications" },
+    { label: "Saved Jobs", href: "/user/saved-jobs" },
+    { label: "Job Alerts", href: "/user/job-alerts" },
+    { label: "Resume Builder", href: "/user/resume-builder" },
     { label: "Profile", href: "/profile" },
   ];
 
   // Public menu items (when not logged in) - Home, About Us, and Contact Us
   const publicMenuItems = [
-    // { label: "Home", href: "/home" },
+    // { label: "Home", href: "/" },
     // { label: "About Us", href: "/about" },
     // { label: "Contact Us", href: "/contact" },
   ];
@@ -138,13 +140,13 @@ export default function Header() {
       <AppBar
         id="Appbar"
         position="fixed"
-        className={`Appbar_height ${scrolled ? 'scrolled' : ''}`}
+        className={`Appbar_height ${pathname === '/' ? 'home-page' : ''} ${scrolled ? 'scrolled' : ''}`}
         elevation={0} // no shadow initially
       >
         <Toolbar className='fx_sb'>
           {/* Logo - Left */}
           <Box>
-            <Link href="/home">
+            <Link href="/">
                {/* <Image
                 src={logo}
                 alt="logo"
@@ -166,13 +168,17 @@ export default function Header() {
             justifyContent: 'center',
             mx: 2
           }}>
-            {menuItems.map((item) => (
-              <Link key={item.href} href={item.href} passHref>
-                <Button disableRipple className={`menus ${pathname === item.href ? 'active' : ''}`}>
-                  {item.label}
-                </Button>
-              </Link>
-            ))}
+            {menuItems.map((item) => {
+              // Check if current pathname matches the menu item href (exact match or starts with for nested routes)
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              return (
+                <Link key={item.href} href={item.href} passHref>
+                  <Button disableRipple className={`menus ${isActive ? 'active' : ''}`}>
+                    {item.label}
+                  </Button>
+                </Link>
+              );
+            })}
           </Box>
 
           {/* Profile Menu / Login Button - Right */}
@@ -215,16 +221,41 @@ export default function Header() {
             component="nav"
             subheader={<ListSubheader component="div">Menu</ListSubheader>}
           >
-            {menuItems.map((item) => (
-              <React.Fragment key={item.href}>
-                <Link href={item.href} passHref>
-                  <ListItemButton disableRipple onClick={handleDrawerClose}>
-                    <ListItemText primary={item.label} />
-                  </ListItemButton>
-                </Link>
-                <Divider />
-              </React.Fragment>
-            ))}
+            {menuItems.map((item) => {
+              // Check if current pathname matches the menu item href (exact match or starts with for nested routes)
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+              return (
+                <React.Fragment key={item.href}>
+                  <Link href={item.href} passHref>
+                    <ListItemButton 
+                      disableRipple 
+                      onClick={handleDrawerClose}
+                      selected={isActive}
+                      sx={{
+                        '&.Mui-selected': {
+                          backgroundColor: 'rgba(0, 176, 240, 0.1)',
+                          borderLeft: '4px solid var(--secondary)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 176, 240, 0.15)',
+                          },
+                        },
+                      }}
+                    >
+                      <ListItemText 
+                        primary={item.label}
+                        primaryTypographyProps={{
+                          sx: {
+                            color: isActive ? 'var(--secondary)' : 'inherit',
+                            fontWeight: isActive ? 600 : 400,
+                          }
+                        }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                  <Divider />
+                </React.Fragment>
+              );
+            })}
             {!isLoggedIn && (
               <>
                 <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>

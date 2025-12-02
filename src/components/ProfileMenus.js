@@ -71,7 +71,7 @@ export default function ProfileMenus() {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       // Redirect to home page after logout
-      window.location.href = "/home";
+      window.location.href = "/";
     }, 100);
   };
 

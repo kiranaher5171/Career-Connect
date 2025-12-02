@@ -78,7 +78,7 @@ const Form = () => {
           if (data.user.role === "admin") {
             router.push("/admin/dashboard");
           } else {
-            router.push("/user/dashboard");
+            router.push("/user/find-jobs");
           }
         }, 1500);
       } else {

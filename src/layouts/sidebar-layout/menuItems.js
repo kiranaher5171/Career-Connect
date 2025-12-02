@@ -19,7 +19,7 @@ import PublishedWithChangesOutlinedIcon from "@mui/icons-material/PublishedWithC
  */
 export const getMenuItems = () => [
     { href: '/dashboard', title: 'Dashboard', icon: DashboardOutlinedIcon },
-    { href: '/home', title: 'Home', icon: FileUploadOutlinedIcon },
+    { href: '/', title: 'Home', icon: FileUploadOutlinedIcon },
     { href: '/projects', title: 'Projects', icon: BuildOutlinedIcon },
     { href: '/documents', title: 'Documents', icon: DescriptionOutlinedIcon },
     { href: '/progress-reports', title: 'Progress Reports', icon: AssessmentOutlinedIcon },

@@ -19,7 +19,7 @@ const NotFoundPage = () => {
                     // Redirect when countdown reaches 1
                     clearInterval(timer)
                     // Use a setTimeout to delay the push, avoiding the render issue
-                    setTimeout(() => router.push('/home'), 0)
+                    setTimeout(() => router.push('/'), 0)
                 }
                 return prevCount - 1
             })
@@ -32,8 +32,8 @@ const NotFoundPage = () => {
         <HeaderFooterLayout>
             <Box height={'100vh'} display='flex' alignItems="center" justifyContent="center" width={'100%'}>
                 <Box className="center">
-                    <Typography variant='h4'>The page you are asking for is Not Found. It may be under construction.</Typography>
-                    <Typography variant='h5'>Redirecting to homepage in {countdown} seconds.</Typography>
+                    <Typography variant='h5' gutterBottom>The page you are asking for is Not Found. It may be under construction.</Typography>
+                    <Typography variant='h6'>Redirecting to homepage in {countdown} seconds.</Typography>
                 </Box>
             </Box>
         </HeaderFooterLayout>
