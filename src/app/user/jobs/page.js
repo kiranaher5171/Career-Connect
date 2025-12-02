@@ -41,10 +41,8 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
-import { Snackbar, Alert, Skeleton } from "@mui/material";
-import MainLayout from "@/components/layout/MainLayout";
-import Link from "next/link";
-import { JobCardSkeleton } from "@/components/skeletons";
+import { Snackbar, Alert, Skeleton } from "@mui/material"; 
+import Link from "next/link"; 
 import Image from "next/image";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -739,7 +737,7 @@ const FindJobsPage = () => {
   }, []);
 
   return (
-    <MainLayout>
+    <HeaderFooterLayout>
       <Box className="page-content">
         {/* Hero Section */}
         <Box className="smHeroSection">
@@ -1690,7 +1688,7 @@ const FindJobsPage = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </MainLayout>
+    </HeaderFooterLayout>
   );
 };
 

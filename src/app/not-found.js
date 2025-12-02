@@ -2,10 +2,10 @@
 
 import { Box, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-
-// import MainLayout from '@/layouts/MainLayout'
 import { useRouter } from 'next/navigation'
 import HeaderFooterLayout from '@/layouts/header-footer-layout/HeaderFooterLayout';
+
+export const dynamic = 'force-dynamic';
 
 const NotFoundPage = () => {
     const [countdown, setCountdown] = useState(3)

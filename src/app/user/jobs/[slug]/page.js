@@ -22,11 +22,11 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import GroupsIcon from "@mui/icons-material/Groups";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import MainLayout from "@/components/layout/MainLayout";
+import PersonAddIcon from "@mui/icons-material/PersonAdd"; 
 import { useRouter, useParams } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import { ReferFriendDialog } from "@/components/dialogs";
+import HeaderFooterLayout from "@/layouts/header-footer-layout/HeaderFooterLayout";
 import ReplyAllIcon from '@mui/icons-material/ReplyAll';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
@@ -88,7 +88,7 @@ const JobDetailsPage = () => {
 
   if (error || !job) {
     return (
-      <MainLayout>
+      <HeaderFooterLayout>
         <Box className="page-content">
           <Container maxWidth="lg">
             <Box sx={{ py: 4 }}>
@@ -120,14 +120,14 @@ const JobDetailsPage = () => {
             </Box>
           </Container>
         </Box>
-      </MainLayout>
+      </HeaderFooterLayout>
     );
   }
 
   const skillsArray = Array.isArray(job.skills) ? job.skills : (job.skills ? job.skills.split(',').map(s => s.trim()) : []);
 
   return (
-    <MainLayout>
+    <HeaderFooterLayout>
       <Box className="page-content">
         <Container maxWidth="lg">
           <Box sx={{ py: 4 }}>
@@ -401,7 +401,7 @@ const JobDetailsPage = () => {
           jobRole={job.jobRole}
         />
       )}
-    </MainLayout>
+    </HeaderFooterLayout>
   );
 };
 
