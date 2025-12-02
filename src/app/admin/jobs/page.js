@@ -12,10 +12,6 @@ import {
   DialogActions,
   TextField,
   Grid,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
   Snackbar,
   Alert,
   Divider,
@@ -33,8 +29,6 @@ import { RiEdit2Fill } from 'react-icons/ri';
 import { MdDeleteOutline } from 'react-icons/md';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { FaEye } from 'react-icons/fa';
-import AgGridInfo from '@/components/table_components/AgGridInfo';
-import AgGridPagination from '@/components/table_components/AgGridPagination';
 import TableSkeleton from '@/components/table_components/TableSkeleton';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -313,21 +307,18 @@ const ManageJobs = () => {
           <span style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <IconButton
               size="small"
-            //   className="ico-btn"
               onClick={() => handleOpenViewDialog(params.data)}
             >
               <FaEye className="col1" />
             </IconButton>
             <IconButton
               size="small"
-            //   className="ico-btn"
               onClick={() => handleOpenDialog(params.data)}
             >
               <RiEdit2Fill className="col1" />
             </IconButton>
             <IconButton
               size="small"
-            //   className="ico-btn"
               onClick={() => handleDelete(params.data._id)}
             >
               <MdDeleteOutline className="col1" />
@@ -371,12 +362,12 @@ const ManageJobs = () => {
 
           <Box className="whitebx">
             {loading ? (
-              <Box style={{ width: "100%", height: "50vh" }}>
+              <Box style={{ width: "100%", height: "50vh", overflow:"auto"  }}>
                 <TableSkeleton />
               </Box>
             ) : (
               <>
-                <Box style={{ width: "100%", height: "50vh" }}>
+                <Box style={{ width: "100%", height: "30vh" , overflow:"auto" }}>
                   <Stack direction="row" justifyContent="space-between" mb={1}>
                     <Box />
                     <Box className="table-search">
@@ -395,7 +386,6 @@ const ManageJobs = () => {
                       />
                     </Box>
                   </Stack>
-
                   <AgGridReact
                     rowData={jobs}
                     columnDefs={colDefs}
@@ -406,7 +396,7 @@ const ManageJobs = () => {
                     domLayout="normal"
                   />
                 </Box>
-                {/* Pagination and info section is commented out (could add here if needed) */}
+                {/* Pagination and info section removed */}
               </>
             )}
           </Box>
@@ -871,4 +861,3 @@ const ManageJobs = () => {
 };
 
 export default ManageJobs;
-
