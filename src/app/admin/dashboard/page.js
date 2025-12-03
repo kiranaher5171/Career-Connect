@@ -40,7 +40,7 @@ const AdminDashboard = () => {
 
     // Listen for logout events and storage changes
     const handleLogout = () => {
-      router.push('/auth/login');
+      router.push('/');
     };
 
     const handleStorageChange = (e) => {

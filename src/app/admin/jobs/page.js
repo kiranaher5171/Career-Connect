@@ -119,7 +119,7 @@ const ManageJobs = () => {
   // Listen for logout events and route changes
   useEffect(() => {
     const handleLogout = () => {
-      router.push('/auth/login');
+      router.push('/');
     };
 
     const handleRouteChange = () => {
@@ -419,9 +419,9 @@ const ManageJobs = () => {
       <Container maxWidth>
         <Box className="page-content"> 
 
-          <Box className="whitebx" mt={4}>
+          <Box className="whitebx" mt={2}>
             {loading ? (
-              <Box style={{ width: "100%", height: "50vh", overflow:"auto"  }}>
+              <Box style={{ width: "100%", height: "60vh", overflow:"auto"  }}>
                 <TableSkeleton />
               </Box>
             ) : (
@@ -461,7 +461,7 @@ const ManageJobs = () => {
                       className="ag-theme-alpine"
                       style={{
                         width: '100%',
-                        height: '50vh',
+                        height: '60vh',
                       }}
                     >
                       <AgGridReact
@@ -507,7 +507,13 @@ const ManageJobs = () => {
           <Box>
             <Divider />
           </Box>
-          <DialogContent sx={{ minHeight: "50vh" }}>
+          <DialogContent 
+            sx={{ 
+             height: "70vh",
+              overflowY: "auto",
+              overflowX: "hidden"
+            }}
+          >
             <Grid container spacing={2} sx={{ mt: 1 }}>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>
                 <Box className="textfield auto-complete">
@@ -763,7 +769,11 @@ const ManageJobs = () => {
         <Box>
           <Divider />
         </Box>
-        <DialogContent sx={{ minHeight: "50vh" }}>
+        <DialogContent   sx={{ 
+             height: "70vh",
+              overflowY: "auto",
+              overflowX: "hidden"
+            }}>
           {viewingJob && (
             <Grid container spacing={2} sx={{ mt: 1 }}>
               <Grid size={{ lg: 6, md: 6, sm: 12, xs: 12 }}>

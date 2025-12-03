@@ -69,6 +69,11 @@ const Form = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
 
+        // Dispatch custom login event to notify all components (Header, ProfileMenus, etc.)
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('userLogin'));
+        }
+
         setSnackbarMessage("Login successful! Redirecting...");
         setSnackbarSeverity("success");
         setSnackbarOpen(true);

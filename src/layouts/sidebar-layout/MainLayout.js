@@ -92,7 +92,7 @@ export default function MainLayout({ children }) {
     const handleLogout = () => {
         localStorage.clear();
         handleCloseP(); // Close the profile menu
-        router.push("/auth/login");
+        router.push("/");
     };
 
     const initials = userName

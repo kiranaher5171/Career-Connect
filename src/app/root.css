@@ -242,20 +242,19 @@ main {
    padding-bottom: 60px !important;
  }
 
-.child-content {
+/* .child-content {
   min-height: calc(100vh - 64px) !important;
   overflow: auto !important;
   padding-bottom: 40px !important;
   padding-top: 64px !important;
-  /* padding: 12px 0px !important; */
-}
-
-/* .page-content {
-  min-height: calc(100vh - 70px) !important;
-  overflow: scroll !important;
-  padding-bottom: 40px !important;
-  padding-top: 64px !important;
+  padding: 12px 0px !important;
 } */
+
+.page-content {
+  min-height: calc(100vh - 70px) !important;
+  /* overflow: auto !important;  */
+  padding-top: 65px !important;
+}
 
 .w100 {
   width: 100% !important;

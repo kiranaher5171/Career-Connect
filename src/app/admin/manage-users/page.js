@@ -76,7 +76,7 @@ const ManageUsers = () => {
   // Listen for logout events and route changes
   useEffect(() => {
     const handleLogout = () => {
-      router.push('/auth/login');
+      router.push('/');
     };
 
     const handleRouteChange = () => {
@@ -254,20 +254,15 @@ const ManageUsers = () => {
       <Container maxWidth>
         <Box className="page-content">
 
-          <Box className="whitebx" mt={4}>
+          <Box className="whitebx" mt={2}>
             {loading ? (
-              <Box style={{ width: "100%", height: "50vh", overflow:"auto"  }}>
+              <Box style={{ width: "100%", height: "60vh", overflow:"auto"  }}>
                 <TableSkeleton />
               </Box>
             ) : (
               <>
-                <Box sx={{
-                  width: '100%',
-                  height: '70vh',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}>
-                  <Stack direction="row" justifyContent="space-between" mb={2} sx={{ flexShrink: 0 }}>
+                <Box>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2} sx={{ flexShrink: 0 }}>
                     <Typography variant="h" className="fw6">
                       Manage Users
                     </Typography>
@@ -291,7 +286,7 @@ const ManageUsers = () => {
                     className="ag-theme-alpine"
                     style={{
                       width: '100%',
-                      height: '100%',
+                      height: '60vh',
                       minHeight: 0,
                     }}
                   >

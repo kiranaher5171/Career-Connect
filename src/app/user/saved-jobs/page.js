@@ -185,7 +185,7 @@ const SavedJobsPage = () => {
   return (
     <HeaderFooterLayout>
       <Container maxWidth>
-        <Box className="page-content" sx={{ py: 4 }}>
+        <Box className="page-content" mt={2}>
           <Box mb={4}>
             <Typography variant="h4" className="fw6" gutterBottom>
               Saved Jobs

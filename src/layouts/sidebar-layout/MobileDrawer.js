@@ -36,7 +36,7 @@ export default function MobileDrawer() {
   const handleLogout = () => {
     localStorage.clear();
     handleCloseDrawer(); // Close the drawer
-    router.push("/auth/login");
+    router.push("/");
   };
 
   useEffect(() => {

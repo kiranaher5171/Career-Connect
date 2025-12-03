@@ -35,16 +35,36 @@ export default function Header() {
   const [loading, setLoading] = React.useState(true);
   const [profileAnchor, setProfileAnchor] = React.useState(null);
 
+  // Helper function to normalize role (trim whitespace and convert to lowercase for comparison)
+  const normalizeRole = React.useCallback((role) => {
+    if (!role || typeof role !== 'string') return null;
+    return role.trim().toLowerCase();
+  }, []);
+
   // Function to check and update auth state
   const checkAuthState = React.useCallback(() => {
+    if (typeof window === 'undefined') {
+      setLoading(false);
+      return;
+    }
+
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     
     if (token && userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        setRole(parsedUser.role);
+        // Validate user object has required fields
+        if (parsedUser && typeof parsedUser === 'object') {
+          setUser(parsedUser);
+          // Normalize role to ensure consistent comparison
+          const normalizedRole = normalizeRole(parsedUser.role);
+          setRole(normalizedRole);
+        } else {
+          console.warn('Invalid user data structure');
+          setUser(null);
+          setRole(null);
+        }
       } catch (error) {
         console.error('Error parsing user data:', error);
         setUser(null);
@@ -55,7 +75,7 @@ export default function Header() {
       setRole(null);
     }
     setLoading(false);
-  }, []);
+  }, [normalizeRole]);
 
   React.useEffect(() => {
     setMounted(true);
@@ -74,8 +94,16 @@ export default function Header() {
       checkAuthState();
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('userLogout', handleLogout);
+    // Listen for custom login event (when user logs in from login page)
+    const handleLogin = () => {
+      checkAuthState();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange);
+      window.addEventListener('userLogout', handleLogout);
+      window.addEventListener('userLogin', handleLogin);
+    }
 
     const handleScroll = () => {
       if (typeof window === 'undefined') return;
@@ -94,9 +122,12 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('userLogout', handleLogout);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('userLogout', handleLogout);
+        window.removeEventListener('userLogin', handleLogin);
+      }
     };
   }, [pathname, checkAuthState]);
 
@@ -155,14 +186,20 @@ export default function Header() {
   ];
 
   // Show public menu while loading or when not logged in
-  const isLoggedIn = !loading && role && user;
+  // Check if user is logged in: must have token, user data, and a valid role
+  const isLoggedIn = !loading && mounted && role && user && typeof role === 'string';
   
   // Determine menu items based on authentication state
   // When logged in, show role-specific menu regardless of current page
   // When not logged in (role is null/undefined), show public menu
+  // Normalize role comparison to handle case-insensitive matching
+  const normalizedRole = role ? normalizeRole(role) : null;
   const menuItems = isLoggedIn 
-    ? (role === "admin" ? adminMenuItems : userMenuItems)
+    ? (normalizedRole === "admin" ? adminMenuItems : userMenuItems)
     : publicMenuItems;
+  
+  // Ensure menuItems is always an array to prevent rendering errors
+  const safeMenuItems = Array.isArray(menuItems) ? menuItems : [];
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -197,7 +234,7 @@ export default function Header() {
             justifyContent: 'center',
             mx: 2
           }}>
-            {menuItems.map((item) => {
+            {safeMenuItems.map((item) => {
               // Check if current pathname matches the menu item href (exact match or starts with for nested routes)
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
@@ -250,7 +287,7 @@ export default function Header() {
             component="nav"
             subheader={<ListSubheader component="div">Menu</ListSubheader>}
           >
-            {menuItems.map((item) => {
+            {safeMenuItems.map((item) => {
               // Check if current pathname matches the menu item href (exact match or starts with for nested routes)
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (

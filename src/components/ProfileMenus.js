@@ -33,16 +33,33 @@ export default function ProfileMenus() {
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const open = Boolean(anchorEl);
 
+  // Helper function to normalize role (trim whitespace and convert to lowercase for comparison)
+  const normalizeRole = (role) => {
+    if (!role || typeof role !== 'string') return null;
+    return role.trim().toLowerCase();
+  };
+
   // Function to check and update auth state
   const checkAuthState = () => {
+    if (typeof window === 'undefined') return;
+
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
     
     if (token && userData) {
       try {
         const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
-        setRole(parsedUser.role);
+        // Validate user object has required fields
+        if (parsedUser && typeof parsedUser === 'object') {
+          setUser(parsedUser);
+          // Normalize role to ensure consistent comparison
+          const normalizedRole = normalizeRole(parsedUser.role);
+          setRole(normalizedRole);
+        } else {
+          console.warn('Invalid user data structure in ProfileMenus');
+          setUser(null);
+          setRole(null);
+        }
       } catch (error) {
         console.error('Error parsing user data:', error);
         setUser(null);
@@ -70,12 +87,23 @@ export default function ProfileMenus() {
       checkAuthState();
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('userLogout', handleLogout);
+    // Listen for custom login event (when user logs in from another component)
+    const handleLogin = () => {
+      checkAuthState();
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange);
+      window.addEventListener('userLogout', handleLogout);
+      window.addEventListener('userLogin', handleLogin);
+    }
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('userLogout', handleLogout);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('userLogout', handleLogout);
+        window.removeEventListener('userLogin', handleLogin);
+      }
     };
   }, []);
   
@@ -98,25 +126,20 @@ export default function ProfileMenus() {
     // Close logout confirmation dialog first
     setLogoutDialogOpen(false);
     
-    // Small delay to ensure dialog closes before showing success
-    setTimeout(() => {
-      // Clear localStorage
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      // Dispatch custom event to notify other components
-      window.dispatchEvent(new Event('userLogout'));
-      // Clear state immediately
-      setUser(null);
-      setRole(null);
-      // Show success dialog
-      setSuccessDialogOpen(true);
-    }, 100);
+    // Clear localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Dispatch custom event to notify other components
+    window.dispatchEvent(new Event('userLogout'));
+    // Clear state immediately
+    setUser(null);
+    setRole(null);
+    // Redirect directly to home page
+    window.location.href = "/";
   };
 
   const handleSuccessDialogClose = () => {
     setSuccessDialogOpen(false);
-    // Redirect to home page after closing success dialog
-    window.location.href = "/";
   };
 
   const handleLogoutCancel = () => {
@@ -157,7 +180,9 @@ export default function ProfileMenus() {
     setLogoutDialogOpen(true);
   };
 
-  if (!user || !role) {
+  // Only hide if we're sure user is not logged in (not just loading)
+  // Show component if user exists, even if role is being determined
+  if (!user) {
     return null;
   }
   return (

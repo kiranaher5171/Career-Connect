@@ -757,7 +757,7 @@ const FindJobsPage = () => {
 
   return (
     <HeaderFooterLayout>
-      <Box>
+      <Box className="page-content">
         {/* Hero Section */}
         <Box className="smHeroSection">
           <Image
