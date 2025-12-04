@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import LOGO from "../../../../public/assets/logo.svg";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -27,11 +27,23 @@ const Form = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const router = useRouter();
+
+  // Load saved email on component mount if remember me was previously checked
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedEmail = localStorage.getItem('rememberedEmail');
+      if (savedEmail) {
+        setFormData(prev => ({ ...prev, email: savedEmail }));
+        setRememberMe(true);
+      }
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -59,7 +71,10 @@ const Form = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          rememberMe: rememberMe,
+        }),
       });
 
       const data = await response.json();
@@ -68,6 +83,13 @@ const Form = () => {
         // Store token in localStorage
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+
+        // Handle remember me functionality
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", formData.email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+        }
 
         // Dispatch custom login event to notify all components (Header, ProfileMenus, etc.)
         if (typeof window !== 'undefined') {
@@ -189,6 +211,8 @@ const Form = () => {
                     color="primary"
                     className="checkbox col1"
                     size="small"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
                   />
                   <Typography
                     htmlFor="rememberMe"

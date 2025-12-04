@@ -8,13 +8,21 @@ import {
   Snackbar,
   Alert,
   Stack,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  IconButton,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import CloseIcon from '@mui/icons-material/Close';
 import HeaderFooterLayout from '@/layouts/header-footer-layout/HeaderFooterLayout';
 import { useRouter } from 'next/navigation';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import TableSkeleton from '@/components/table_components/TableSkeleton';
+import ResumePreview from '@/components/resume/ResumePreview';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -25,6 +33,9 @@ const ManageUsers = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+  const [resumeDialogOpen, setResumeDialogOpen] = useState(false);
+  const [selectedUserResume, setSelectedUserResume] = useState(null);
+  const [loadingResume, setLoadingResume] = useState(false);
 
   useEffect(() => {
     checkAuth();
@@ -235,6 +246,27 @@ const ManageUsers = () => {
         return formatDate(params.data?.createdAt);
       }
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      minWidth: 120,
+      cellRenderer: (params) => {
+        return (
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<VisibilityIcon />}
+            onClick={() => handleViewResume(params.data)}
+            sx={{ textTransform: 'none' }}
+          >
+            View Resume
+          </Button>
+        );
+      },
+      cellClass: "center",
+      sortable: false,
+      filter: false,
+    },
   ]);
 
   const defaultColDef = {
@@ -248,6 +280,55 @@ const ManageUsers = () => {
   const getRowStyle = (params) => ({
     backgroundColor: params.node.rowIndex % 2 === 0 ? "#f9f9f9" : "#ffffff",
   });
+
+  const handleViewResume = async (user) => {
+    try {
+      setLoadingResume(true);
+      setResumeDialogOpen(true);
+      
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showSnackbar('Authentication required', 'error');
+        setResumeDialogOpen(false);
+        return;
+      }
+
+      // Get user ID - handle both string and ObjectId formats
+      const userId = user._id?.toString ? user._id.toString() : user._id;
+
+      const response = await fetch(`/api/users/${userId}/resume`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        if (data.data) {
+          setSelectedUserResume(data.data);
+        } else {
+          setSelectedUserResume(null);
+          showSnackbar(`No resume found for ${user.firstName} ${user.lastName}`, 'info');
+        }
+      } else {
+        showSnackbar(data.error || 'Failed to fetch resume', 'error');
+        setResumeDialogOpen(false);
+      }
+    } catch (error) {
+      console.error('Error fetching resume:', error);
+      showSnackbar('Failed to fetch resume', 'error');
+      setResumeDialogOpen(false);
+    } finally {
+      setLoadingResume(false);
+    }
+  };
+
+  const handleCloseResumeDialog = () => {
+    setResumeDialogOpen(false);
+    setSelectedUserResume(null);
+  };
 
   return (
     <HeaderFooterLayout>
@@ -306,6 +387,57 @@ const ManageUsers = () => {
           </Box>
         </Box>
       </Container>
+
+      {/* Resume Preview Dialog */}
+      <Dialog
+        open={resumeDialogOpen}
+        onClose={handleCloseResumeDialog}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: { borderRadius: 2, maxHeight: "90vh" },
+        }}
+      >
+        <DialogTitle>
+          User Resume Preview
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseResumeDialog}
+            sx={{ position: "absolute", right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            minHeight: "50vh",
+            p: 3,
+            overflowY: "auto",
+            bgcolor: "#f5f5f5",
+          }}
+        >
+          {loadingResume ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+              <Typography>Loading resume...</Typography>
+            </Box>
+          ) : selectedUserResume ? (
+            <ResumePreview
+              open={true}
+              onClose={handleCloseResumeDialog}
+              formData={selectedUserResume}
+              onAISuggest={() => {}}
+              onDownload={() => {}}
+              aiModifiedFields={{}}
+              isAILoading={false}
+              hideDialog={true}
+            />
+          ) : (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+              <Typography>No resume data available for this user.</Typography>
+            </Box>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Snackbar */}
       <Snackbar

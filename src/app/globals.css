@@ -63,3 +63,33 @@ a {
   align-items: center !important;
   min-height: 30vh !important;
 }
+
+.resume-username{
+  font-size: 24px !important;
+  line-height: normal !important;
+  font-weight: 700 !important;
+  letter-spacing: 4px !important;
+  text-transform: uppercase !important;
+  /* margin-bottom: 4px !important; */
+}
+
+.resume-heading{
+  font-size: 18px !important;
+  line-height: 1.8 !important;
+  font-weight: 500 !important;
+  letter-spacing: 2px !important;
+  border-bottom: 1px solid var(--text) !important;
+  margin-bottom: 15px !important;
+}
+
+.resume-subheading{
+  font-size: 16px !important;
+  line-height: 1.8 !important;
+  font-weight: 400 !important; 
+  margin-bottom: 4px !important;
+}
+
+.resume-marker ::marker{
+  font-size: 14px !important;
+  color: var(--text) !important;
+}

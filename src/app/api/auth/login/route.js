@@ -5,7 +5,7 @@ import { generateToken } from '@/lib/auth';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { email, password } = body;
+    const { email, password, rememberMe } = body;
 
     // Validation
     if (!email || !password) {
@@ -33,8 +33,8 @@ export async function POST(request) {
       );
     }
 
-    // Generate token
-    const token = generateToken(user);
+    // Generate token with expiration based on rememberMe
+    const token = generateToken(user, rememberMe);
 
     // Return user data (without password) and token
     const userData = {
@@ -54,12 +54,17 @@ export async function POST(request) {
       { status: 200 }
     );
 
-    // Set HTTP-only cookie
+    // Set HTTP-only cookie with expiration based on rememberMe
+    // If rememberMe is true, set cookie for 30 days, otherwise 7 days
+    const maxAge = rememberMe 
+      ? 60 * 60 * 24 * 30 // 30 days
+      : 60 * 60 * 24 * 7; // 7 days
+    
     response.cookies.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: maxAge,
     });
 
     return response;

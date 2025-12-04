@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 // JWT Functions
-export function generateToken(user) {
+export function generateToken(user, rememberMe = false) {
+  const expiresIn = rememberMe ? '30d' : '7d';
   return jwt.sign(
     {
       userId: user._id.toString(),
@@ -11,7 +12,7 @@ export function generateToken(user) {
       role: user.role,
     },
     JWT_SECRET,
-    { expiresIn: '7d' }
+    { expiresIn }
   );
 }
 
