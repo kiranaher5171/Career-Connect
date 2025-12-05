@@ -388,56 +388,88 @@ const ManageUsers = () => {
         </Box>
       </Container>
 
-      {/* Resume Preview Dialog */}
-      <Dialog
-        open={resumeDialogOpen}
-        onClose={handleCloseResumeDialog}
-        maxWidth="md"
-        fullWidth
-        PaperProps={{
-          sx: { borderRadius: 2, maxHeight: "90vh" },
-        }}
-      >
-        <DialogTitle>
-          User Resume Preview
-          <IconButton
-            aria-label="close"
-            onClick={handleCloseResumeDialog}
-            sx={{ position: "absolute", right: 8, top: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            minHeight: "50vh",
-            p: 3,
-            overflowY: "auto",
-            bgcolor: "#f5f5f5",
+      {/* Resume Preview Dialog - Using ResumePreview's own dialog (same as resume builder) */}
+      {loadingResume ? (
+        <Dialog
+          open={resumeDialogOpen}
+          onClose={handleCloseResumeDialog}
+          maxWidth="md"
+          fullWidth
+          PaperProps={{
+            sx: { borderRadius: 2, maxHeight: "90vh" },
           }}
         >
-          {loadingResume ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
-              <Typography>Loading resume...</Typography>
-            </Box>
-          ) : selectedUserResume ? (
-            <ResumePreview
-              open={true}
-              onClose={handleCloseResumeDialog}
-              formData={selectedUserResume}
-              onAISuggest={() => {}}
-              onDownload={() => {}}
-              aiModifiedFields={{}}
-              isAILoading={false}
-              hideDialog={true}
-            />
-          ) : (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
-              <Typography>No resume data available for this user.</Typography>
-            </Box>
-          )}
-        </DialogContent>
-      </Dialog>
+          <DialogTitle>
+            User Resume Preview
+            <IconButton
+              aria-label="close"
+              onClick={handleCloseResumeDialog}
+              sx={{ position: "absolute", right: 8, top: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent
+            sx={{
+              minHeight: "50vh",
+              p: 3,
+              overflowY: "auto",
+              bgcolor: "#f5f5f5",
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Typography>Loading resume...</Typography>
+          </DialogContent>
+        </Dialog>
+      ) : selectedUserResume ? (
+        <ResumePreview
+          open={resumeDialogOpen}
+          onClose={handleCloseResumeDialog}
+          formData={selectedUserResume}
+          onAISuggest={() => {}}
+          onDownload={() => {}}
+          aiModifiedFields={{}}
+          isAILoading={false}
+          hideDialog={false}
+          hideAISuggest={true}
+        />
+      ) : resumeDialogOpen ? (
+        <Dialog
+          open={resumeDialogOpen}
+          onClose={handleCloseResumeDialog}
+          maxWidth="md"
+          fullWidth
+          PaperProps={{
+            sx: { borderRadius: 2, maxHeight: "90vh" },
+          }}
+        >
+          <DialogTitle>
+            User Resume Preview
+            <IconButton
+              aria-label="close"
+              onClick={handleCloseResumeDialog}
+              sx={{ position: "absolute", right: 8, top: 8 }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </DialogTitle>
+          <DialogContent
+            sx={{
+              minHeight: "50vh",
+              p: 3,
+              overflowY: "auto",
+              bgcolor: "#f5f5f5",
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Typography>No resume data available for this user.</Typography>
+          </DialogContent>
+        </Dialog>
+      ) : null}
 
       {/* Snackbar */}
       <Snackbar

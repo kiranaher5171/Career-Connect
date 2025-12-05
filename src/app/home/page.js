@@ -13,7 +13,7 @@ const page = () => {
             <HeaderFooterLayout>
                 <HeroSection/>
                 <Container maxWidth>
-                    <Box py={8} className="center">
+                    <Box py={8} className="">
                         <Stack spacing={4} alignItems="center">
                             <Typography variant="h2" className="fw6 col1" gutterBottom>
                                 Welcome to CareerConnect

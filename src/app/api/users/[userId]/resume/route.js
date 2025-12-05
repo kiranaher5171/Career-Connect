@@ -41,8 +41,8 @@ export async function GET(request, { params }) {
       );
     }
 
-    // Get target user's resume
-    const { userId } = params;
+    // Get target user's resume - await params in Next.js 15+
+    const { userId } = await params;
     const targetUserId = typeof userId === 'string' ? new ObjectId(userId) : userId;
     
     const resumes = db.collection('resumes');

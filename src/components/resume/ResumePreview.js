@@ -258,6 +258,7 @@ const ResumePreview = ({
   aiModifiedFields = {},
   isAILoading = false,
   hideDialog = false,
+  hideAISuggest = false,
 }) => {
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -1298,20 +1299,22 @@ const ResumePreview = ({
         >
           Close
         </Button>
-        <Button
-          onClick={onAISuggest}
-          className="secondary-outline-btn"
-          variant="outlined"
-          startIcon={<SmartToyIcon />}
-          disabled={isAILoading}
-          sx={{
-            minWidth: "140px",
-            borderColor: "var(--secondary)",
-            color: "var(--secondary)",
-          }}
-        >
-          {isAILoading ? "Processing..." : "AI Suggest"}
-        </Button>
+        {!hideAISuggest && (
+          <Button
+            onClick={onAISuggest}
+            className="secondary-outline-btn"
+            variant="outlined"
+            startIcon={<SmartToyIcon />}
+            disabled={isAILoading}
+            sx={{
+              minWidth: "140px",
+              borderColor: "var(--secondary)",
+              color: "var(--secondary)",
+            }}
+          >
+            {isAILoading ? "Processing..." : "AI Suggest"}
+          </Button>
+        )}
         <Button
           onClick={handleDownloadPDF}
           className="primary-action-btn"

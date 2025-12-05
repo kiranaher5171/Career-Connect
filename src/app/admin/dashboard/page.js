@@ -63,10 +63,9 @@ const AdminDashboard = () => {
   }
 
   return (
-    <HeaderFooterLayout>
-          <HeroSection/>
-      <Container maxWidth>
-        <Box>
+    <HeaderFooterLayout> 
+      <Container maxWidth="lg">
+        <Box className="page-content">
           <Typography variant="h4" className="fw6" gutterBottom>
             Welcome, Admin {user.firstName} {user.lastName}
           </Typography>
