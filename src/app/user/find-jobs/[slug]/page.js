@@ -27,6 +27,7 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import HeaderFooterLayout from '@/layouts/header-footer-layout/HeaderFooterLayout';
 import { useRouter, useParams } from "next/navigation";
+import { ReferFriendDialog } from '@/components/dialogs';
 
 const JobDetailsPage = () => {
   const router = useRouter();
@@ -35,6 +36,7 @@ const JobDetailsPage = () => {
   const [job, setJob] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [referDialogOpen, setReferDialogOpen] = useState(false);
 
   useEffect(() => {
     if (slug) {
@@ -356,12 +358,26 @@ const JobDetailsPage = () => {
               startIcon={<PersonAddIcon />}
               className="secondary-action-btn"
               sx={{ minWidth: 150 }}
+              onClick={() => setReferDialogOpen(true)}
             >
               Refer Friend
             </Button>
           </Box>
         </Box>
       </Container>
+
+      {/* Refer Friend Dialog */}
+      {job && (
+        <ReferFriendDialog
+          open={referDialogOpen}
+          onClose={() => setReferDialogOpen(false)}
+          jobId={job._id?.toString() || job._id}
+          jobRole={job.jobRole || job.title || 'N/A'}
+          onSuccess={(referralData) => {
+            console.log('Referral submitted:', referralData);
+          }}
+        />
+      )}
     </HeaderFooterLayout>
   );
 };

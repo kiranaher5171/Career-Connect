@@ -93,3 +93,12 @@ a {
   font-size: 14px !important;
   color: var(--text) !important;
 }
+
+.banner-heading{
+  font-size: 5rem !important;
+  line-height: normal !important;
+  text-transform: uppercase !important;
+  font-weight: 800 !important;
+  letter-spacing: 2px !important;
+  font-family: 'lora', sans-serif !important;
+}

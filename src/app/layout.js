@@ -13,6 +13,7 @@ const outfit = Outfit({
 
 // Lora - Secondary font (apply with className="lora")
 // Lora only supports weights: 400, 500, 600, 700
+// CSS font-weight: 800 will fallback to 700 (the maximum available)
 const lora = Lora({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
