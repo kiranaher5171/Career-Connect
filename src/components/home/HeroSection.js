@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { Box, Button, Container, Stack, Typography } from '@mui/material'
-import Grid from "@mui/material/Grid";
+import { Box, Button, Container, Stack, Typography, Grid } from '@mui/material' 
 import { useRouter } from 'next/navigation'
-import NearMeIcon from '@mui/icons-material/NearMe'
+import { MdNearMe } from 'react-icons/md'
 
 const HeroSection = () => {
     const router = useRouter();
@@ -52,14 +51,14 @@ const HeroSection = () => {
             <Box className="content" sx={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', alignItems: 'center' }}>
                 <Container maxWidth="lg">
                     <Grid container spacing={0} alignItems="center" justifyContent="flex-start">
-                        <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12 }}>
+                        <Grid size={{ xs: 12, sm: 12, md: 12, lg:12 }}>
                             <Box pt={8}>
                                 <Stack spacing={3} alignItems="flex-start">
                                     <Typography variant="h1" className=" white banner-heading" gutterBottom>
                                         Discover Your Next <span style={{ color: "#eeb92c" }}>Career Opportunity</span>
                                     </Typography>
                                     <Typography variant="h1" className="fw4 white"  >
-                                        Connect with top employers and explore thousands of job <br/> opportunities with CareerConnect.
+                                        Join our team and explore exciting career opportunities <br/> that match your skills and aspirations.
                                     </Typography> 
                                     <Stack justifyContent="flex-start" direction="row" spacing={2} pt={4}>
                                         <Button
@@ -68,7 +67,7 @@ const HeroSection = () => {
                                             size="large"
                                             onClick={() => router.push('/auth/signup')}
                                             disableRipple
-                                            endIcon={<NearMeIcon fontSize='small' />}
+                                            endIcon={<MdNearMe size={20} />}
                                         >
                                             Explore Now
                                         </Button> 
@@ -84,3 +83,4 @@ const HeroSection = () => {
 }
 
 export default HeroSection
+

@@ -124,5 +124,19 @@ min-width: 150px !important;
   border-radius: 0px !important;
   min-width: 150px !important;
   box-shadow: none !important;
+  border: none !important;
   text-transform: uppercase !important;
+}
+
+.explore-btn{
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #000 !important;
+  background-color: #eeb92c !important;
+  border-radius: 22px !important;
+  min-width: 150px !important;
+  box-shadow: none !important;
+  border: none !important;
+  text-transform: capitalize !important;
+  padding: 7px 30px !important;
 }
