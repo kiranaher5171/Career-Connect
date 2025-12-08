@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
-import { getJobAlertById } from '@/lib/models/JobAlert';
-import { getAllJobs } from '@/lib/models/Job';
-import { findMatchingJobs } from '@/lib/utils/jobMatching';
+import { getJobAlertById } from '@/lib/db/models/JobAlert';
+import { getAllJobs } from '@/lib/db/models/Job';
+import { findMatchingJobs } from '@/utils/jobMatching';
 
 // GET matched jobs for an alert
 export async function GET(request, { params }) {

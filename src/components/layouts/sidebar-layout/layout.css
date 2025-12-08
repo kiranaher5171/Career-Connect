@@ -1,0 +1,260 @@
+#header {
+  background-color: var(--white) !important;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px  !important;
+  z-index: 1203 !important;
+  
+ }
+
+.drawer .MuiDrawer-paper {
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  border: none !important;
+}
+
+.page-header {
+  color: var(--primary) !important;
+  font-family: var(--font-poppins) !important;
+  font-size: 18px !important;
+  line-height: normal !important;
+  margin: 0px !important;
+}
+
+.small.footer {
+  background-color: #d9d9d9 !important;
+  padding: 10px 0px !important;
+  position: absolute !important;
+  width: 100% !important;
+  bottom: 0px !important;
+}
+
+.lglogo{
+  width: 150px !important;
+  height: auto;
+}
+
+.smlogo{
+  width: 50px !important;
+  height: auto;
+}
+
+.mobile-logo{
+  width: 130px !important;
+  height: auto !important;
+}
+
+.small.footer.footer h6 {
+  font-size: 12px !important;
+  line-height: normal !important;
+}
+
+.sidebar-bg {
+  padding: 16px !important;
+  height: 100vh !important;
+  background-image: url(../../../public/assets/sidebar-bg.jpg) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  position: relative !important;
+  background-blend-mode: overlay !important;
+  background-color: #ffffffe6   !important;
+}
+
+#menus {
+  padding-top: 12px !important;
+}
+
+#menus .MuiList-root {
+  position: relative !important;
+  height: calc(100vh - 80px) !important;
+}
+
+#menus .MuiListItemIcon-root {
+  min-width: 45px !important;
+}
+
+#menus .MuiListItemButton-root {
+  font-family: var(--font-poppins) !important;
+  background-color: var(--white) !important;
+  margin: 6px 0px !important;
+}
+
+#menus .MuiListItemText-primary {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: normal !important;
+  color: var(--primary) !important;
+}
+
+#menus .MuiSvgIcon-root {
+  font-size: 20px !important;
+  color: var(--primary) !important;
+}
+
+#menus .MuiListItemButton-root.Mui-selected {
+  background-color: var(--secondary) !important;
+}
+#menus .MuiListItemButton-root.Mui-selected .MuiSvgIcon-root {
+  color: var(--white) !important;
+}
+
+#menus .MuiListItemButton-root.Mui-selected .MuiListItemText-primary {
+  color: var(--white) !important;
+}
+
+#menus .log-out-button .MuiListItemText-primary {
+  color: var(--white) !important;
+}
+
+#menus .log-out-button .MuiListItemButton-root {
+  background-color: var(--primary) !important;
+  color: var(--white) !important;
+}
+
+#menus .log-out-button .MuiSvgIcon-root {
+  color: var(--white) !important;
+}
+
+.log-out-button {
+  position: absolute !important;
+  bottom: 10px !important;
+  width: 100% !important;
+}
+
+.notifications .MuiIconButton-root {
+  color: var(--secondary) !important;
+  background-color: #f6efe2 !important;
+  border-radius: 12px !important;
+}
+
+.notifications .MuiBadge-badge {
+  background-color: var(--secondary) !important;
+  top: 4px !important;
+  right: 4px !important;
+  border: 2px solid white !important;
+  border-radius: 50% !important;
+  height: 12px !important;
+  min-width: 12px !important;
+}
+
+#profile .MuiListItemButton-root {
+  padding: 0px !important;
+  padding-right: 30px !important;
+}
+#profile .MuiListItemButton-root:hover {
+  background-color: transparent !important;
+}
+#profile h6 {
+  color: var(--black) !important;
+}
+#profile h6 span {
+  font-size: 13px !important;
+  line-height: normal !important;
+  color: var(--text) !important;
+}
+
+#profile .MuiListItemSecondaryAction-root {
+  color: var(--black) !important;
+  display: flex !important;
+  align-items: center !important;
+  right: 4px !important;
+}
+
+#profile .MuiListItemAvatar-root {
+  min-width: 40px !important;
+}
+
+#profile .MuiListItemAvatar-root .MuiAvatar-root {
+  font-size: 15px !important;
+  line-height: normal !important;
+  background-color: var(--lgray) !important;
+  height: 35px !important;
+  width: 35px !important;
+}
+
+#profile-menu .MuiPaper-root {
+  border-radius: 6px !important;
+  padding: 4px !important;
+  /* box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px !important; */
+}
+
+#profile-menu .profile-options {
+  font-size: 13px !important;
+  line-height: normal !important;
+  text-transform: capitalize !important;
+  color: var(--black) !important;
+  padding: 8px 18px !important;
+  padding-left: 14px !important;
+  min-width: 120px !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  border-radius: 0px !important;
+  border-left: 4px solid transparent !important;
+}
+
+#profile-menu .profile-options:hover {
+  border-left: 4px solid var(--secondary) !important;
+  background-color: transparent !important;
+  color: var(--secondary) !important;
+}
+
+#right-sidebar .MuiPaper-root {
+  width: auto !important;
+  min-width: 280px !important;
+  max-width: 25% !important;
+}
+
+#right-sidebar .drawer-header {
+  border-bottom: 2px solid #d9d9d9 !important;
+  height: 65px !important;
+  padding: 20px !important;
+  position: relative !important;
+}
+
+#right-sidebar .drawer-header .sidebar-handler {
+  position: absolute !important;
+  right: 20px !important;
+}
+
+#right-sidebar .drawer-content {
+  padding: 20px !important;
+}
+
+.mobile-menu-icon {
+  background: transparent !important;
+  color: var(--primary) !important;
+  border-radius: 6px !important;
+  padding: 6px !important;
+  border: 2px solid var(--primary) !important;
+}
+
+/* Media Queries */
+#mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 850px) {
+  #desktop-only {
+    display: none !important;
+  }
+  #mobile-only {
+    display: inherit !important;
+  }
+}
+
+@media (max-width: 550px) {
+  #profile .MuiListItemText-root {
+    display: none !important;
+  }
+  #profile .MuiListItemSecondaryAction-root {
+    display: none !important;
+  }
+  #profile .MuiListItemButton-root {
+    padding-right: 10px !important;
+  }
+  .MuiPopover-paper.MuiMenu-paper::before {
+    right: 35px !important;
+  }
+  #mobile-only.mr0 {
+    margin-left: 0px !important;
+  }
+ 
+}

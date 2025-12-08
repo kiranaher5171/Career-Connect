@@ -3,9 +3,9 @@ import { verifyToken } from '@/lib/auth';
 import {
   createJobAlert,
   getUserJobAlerts,
-} from '@/lib/models/JobAlert';
-import { getAllJobs } from '@/lib/models/Job';
-import { getNewJobsCount } from '@/lib/utils/jobMatching';
+} from '@/lib/db/models/JobAlert';
+import { getAllJobs } from '@/lib/db/models/Job';
+import { getNewJobsCount } from '@/utils/jobMatching';
 
 // GET all job alerts for current user
 export async function GET(request) {

@@ -1,6 +1,7 @@
-import "./root.css";
+import "@/styles/root.css";
+import "@/styles/globals.css";
 import { Outfit, Lora } from 'next/font/google';
-import ThemeProviderComponent from "@/components/ThemeProviderComponent";
+import ThemeProviderComponent from "@/components/common/ui/ThemeProviderComponent";
 import crypto from 'crypto';
 
 // Outfit - Default font for the entire project

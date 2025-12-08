@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
-import { toggleJobAlert } from '@/lib/models/JobAlert';
+import { toggleJobAlert } from '@/lib/db/models/JobAlert';
 
 // PATCH toggle alert active status
 export async function PATCH(request, { params }) {

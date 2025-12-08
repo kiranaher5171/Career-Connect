@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { findUserByEmail, verifyPassword } from '@/lib/models/User';
+import { findUserByEmail, verifyPassword } from '@/lib/db/models/User';
 import { generateToken } from '@/lib/auth';
 
 export async function POST(request) {

@@ -4,7 +4,7 @@ import {
   getJobAlertById,
   updateJobAlert,
   deleteJobAlert,
-} from '@/lib/models/JobAlert';
+} from '@/lib/db/models/JobAlert';
 
 // GET a single job alert
 export async function GET(request, { params }) {

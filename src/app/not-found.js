@@ -3,7 +3,7 @@
 import { Box, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import HeaderFooterLayout from '@/layouts/header-footer-layout/HeaderFooterLayout';
+import HeaderFooterLayout from '@/components/layouts/header-footer-layout/HeaderFooterLayout';
 
 export const dynamic = 'force-dynamic';
 

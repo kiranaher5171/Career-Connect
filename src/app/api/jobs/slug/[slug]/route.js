@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getJobBySlug } from '@/lib/models/Job';
+import { getJobBySlug } from '@/lib/db/models/Job';
 
 // GET job by slug
 export async function GET(request, { params }) {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getJobById, updateJob, deleteJob } from '@/lib/models/Job';
+import { getJobById, updateJob, deleteJob } from '@/lib/db/models/Job';
 
 // GET job by ID
 export async function GET(request, { params }) {

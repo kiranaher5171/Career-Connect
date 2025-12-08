@@ -6,10 +6,9 @@ import {
     HowItWorks,
     StatisticsSection,
     WhyJoinUs,
-    AboutUs,
     TestimonialsSection
-} from '@/components/home';
-import HeaderFooterLayout from '@/layouts/header-footer-layout/HeaderFooterLayout';
+} from '@/components/features/home';
+import HeaderFooterLayout from '@/components/layouts/header-footer-layout/HeaderFooterLayout';
 import React from 'react'
 
 const page = () => {
@@ -22,7 +21,6 @@ const page = () => {
                 <HowItWorks />
                 <StatisticsSection />
                 <WhyJoinUs />
-                <AboutUs />
                 <TestimonialsSection />
             </HeaderFooterLayout>
         </>

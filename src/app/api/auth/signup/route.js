@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createUser } from '@/lib/models/User';
+import { createUser } from '@/lib/db/models/User';
 
 export const dynamic = 'force-dynamic';
 

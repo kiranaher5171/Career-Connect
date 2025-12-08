@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import clientPromise from '@/lib/mongodb';
+import clientPromise from '@/lib/db/mongodb';
 import { verifyToken } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
 import fs from 'fs';
@@ -88,7 +88,7 @@ export async function POST(request) {
           fs.mkdirSync(uploadsDir, { recursive: true });
         }
 
-        // Generate unique filename
+        // Generate unique filename - sanitize to avoid issues with spaces and special chars
         const timestamp = Date.now();
         const sanitizedFileName = resumeFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         const fileName = `${timestamp}_${sanitizedFileName}`;
@@ -99,13 +99,24 @@ export async function POST(request) {
         const buffer = Buffer.from(arrayBuffer);
         fs.writeFileSync(filePath, buffer);
 
-        resumeUrl = fileName; // Store relative path
+        // Verify file was actually saved
+        if (!fs.existsSync(filePath)) {
+          throw new Error('File was not saved successfully');
+        }
+
+        console.log('Resume file saved successfully:', fileName);
+        resumeUrl = fileName; // Store relative path (sanitized)
         resumeFileName = resumeFile.name; // Store original filename
       } catch (fileError) {
         console.error('Error saving file:', fileError);
-        // Fallback to metadata only
-        resumeUrl = `resume_${Date.now()}_${resumeFile.name}`;
-        resumeFileName = resumeFile.name;
+        // Don't store resumeFile if save failed - return error instead
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: `Failed to save resume file: ${fileError.message}` 
+          },
+          { status: 500 }
+        );
       }
     }
 
