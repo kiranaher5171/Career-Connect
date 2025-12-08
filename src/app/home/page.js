@@ -1,5 +1,5 @@
 "use client";
-import HeroSection from '@/components/HeroSection';
+import { HeroSection } from '@/components/features/home';
 import HeaderFooterLayout from '@/components/layouts/header-footer-layout/HeaderFooterLayout';
 import { Container, Box, Button, Typography, Stack } from '@mui/material'
 import { useRouter } from 'next/navigation';
