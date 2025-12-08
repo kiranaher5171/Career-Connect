@@ -21,6 +21,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 import OpenInNewOutlinedIcon from "@mui/icons-material/OpenInNewOutlined";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
+import { calculateATSScore } from "@/utils/atsScore";
 
 // Google Fonts URL for Poppins and Outfit
 const GOOGLE_FONTS_URL = 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap';
@@ -52,8 +53,10 @@ const PDF_CONFIG = {
 };
 
 const PX_TO_MM = 0.264583; // 1px = 0.264583mm at 96dpi
-const CANVAS_SCALE = 2; // html2canvas scale factor
+const CANVAS_SCALE = 1.5; // html2canvas scale factor (reduced from 2 to optimize file size)
 const RENDER_DELAY = 200; // ms delay for rendering
+const MAX_PDF_SIZE_MB = 3; // Maximum PDF file size in MB
+const IMAGE_QUALITY = 0.85; // Image quality (0.85 for good quality with smaller file size)
 
 /**
  * Prepares the element for PDF generation
@@ -103,7 +106,8 @@ const createPageCanvas = (sourceCanvas, sourceY, sourceHeight) => {
     sourceHeight
   );
 
-  return pageCanvas.toDataURL("image/png", 1.0);
+  // Use JPEG format with quality for better compression and smaller file size
+  return pageCanvas.toDataURL("image/jpeg", IMAGE_QUALITY);
 };
 
 /**
@@ -133,46 +137,42 @@ const splitCanvasToPages = (canvas, pdf, scaleFactor) => {
   const MAX_PAGES = 100; // Safety limit
 
   // Process pages until we've captured the entire canvas
-  // Add small overlap to prevent cutting content in the middle
-  const pageOverlap = Math.floor((5 / scale / PX_TO_MM) * CANVAS_SCALE); // 5mm overlap in canvas pixels
+  // NO overlap to prevent content duplication
 
   while (sourceY < canvas.height && pageNumber < MAX_PAGES) {
     if (pageNumber > 0) {
       pdf.addPage();
-      // Start new page with small overlap from previous page to ensure smooth transition
-      sourceY = Math.max(0, sourceY - pageOverlap);
     }
 
     // Calculate remaining canvas pixels
     const remainingCanvasPixels = canvas.height - sourceY;
 
-    // Calculate how many canvas pixels fit in one page (with some margin for rounding)
+    // Calculate how many canvas pixels fit in one page
     const canvasPixelsPerPage = Math.floor(
       (availableHeight / scale / PX_TO_MM) * CANVAS_SCALE
     );
 
-    // Determine if this is the last page - be more generous with tolerance
-    // If remaining is less than 1.2x the page capacity, treat as last page
-    const isLastPage = remainingCanvasPixels <= canvasPixelsPerPage * 1.2;
+    // Determine if this is the last page
+    // If remaining is less than 1.15x the page capacity, treat as last page
+    const isLastPage = remainingCanvasPixels <= canvasPixelsPerPage * 1.15;
 
     let sourceHeight;
     let pageImageHeight;
 
     if (isLastPage) {
-      // Last page - capture ALL remaining pixels from canvas, no matter how much
+      // Last page - capture ALL remaining pixels from canvas
       sourceHeight = remainingCanvasPixels;
       // Convert back to mm for PDF display
       pageImageHeight = (sourceHeight / CANVAS_SCALE) * PX_TO_MM * scale;
 
       // Ensure the last page doesn't exceed available height too much
-      // If it does, we'll still capture it but might need to adjust display
       if (pageImageHeight > availableHeight * 1.5) {
         // If it's way too big, scale it down but still capture all pixels
         pageImageHeight = availableHeight * 1.2; // Allow 20% overflow
       }
     } else {
-      // Regular page - use calculated pixels per page (add overlap for next page)
-      sourceHeight = canvasPixelsPerPage + pageOverlap;
+      // Regular page - use calculated pixels per page (NO overlap to prevent duplication)
+      sourceHeight = canvasPixelsPerPage;
       pageImageHeight = availableHeight;
     }
 
@@ -194,47 +194,19 @@ const splitCanvasToPages = (canvas, pdf, scaleFactor) => {
 
     pdf.addImage(
       pageImgData,
-      "PNG",
+      "JPEG",
       xOffset,
       marginTop,
       scaledWidth,
       displayHeight
     );
 
-    // Move to next position in canvas pixels (subtract overlap for next iteration)
-    if (!isLastPage) {
-      sourceY += canvasPixelsPerPage; // Move forward by page height, not including overlap
-    } else {
-      sourceY += sourceHeight; // Last page, move by full height
-    }
+    // Move to next position in canvas pixels (move by exact height, no overlap)
+    sourceY += sourceHeight;
     pageNumber++;
 
     // Safety check - if we've processed all canvas content, we're done
     if (sourceY >= canvas.height) {
-      break;
-    }
-
-    // Additional check: if remaining pixels are very small, capture them anyway
-    const finalRemaining = canvas.height - sourceY;
-    if (finalRemaining > 0 && finalRemaining < 50) {
-      // Less than 50 pixels remaining
-      // Add one more page to capture the remaining content
-      pdf.addPage();
-      const finalPageImgData = createPageCanvas(
-        canvas,
-        sourceY,
-        finalRemaining
-      );
-      const finalPageHeight =
-        (finalRemaining / CANVAS_SCALE) * PX_TO_MM * scale;
-      pdf.addImage(
-        finalPageImgData,
-        "PNG",
-        xOffset,
-        marginTop,
-        scaledWidth,
-        finalPageHeight
-      );
       break;
     }
   }
@@ -271,6 +243,7 @@ const ResumePreview = ({
   useEffect(() => {
     loadGoogleFonts();
   }, []);
+
 
   /**
    * Shows snackbar notification
@@ -406,10 +379,10 @@ const ResumePreview = ({
       // Try to fit on single page first if content is not too large
       if (scaledHeight <= availableHeight * 1.1) {
         // Content fits on one page (with 10% tolerance)
-        const imgData = canvas.toDataURL("image/png", 1.0);
+        const imgData = canvas.toDataURL("image/jpeg", IMAGE_QUALITY);
         pdf.addImage(
           imgData,
-          "PNG",
+          "JPEG",
           marginLeft,
           marginTop,
           availableWidth,
@@ -420,9 +393,121 @@ const ResumePreview = ({
         splitCanvasToPages(canvas, pdf, scaleFactor);
       }
 
-      // Save PDF
-      pdf.save("Resume-Preview.pdf");
-      showSnackbar("PDF downloaded successfully!", "success");
+      // Check PDF size and optimize if needed
+      const pdfBlob = pdf.output('blob');
+      const fileSizeMB = pdfBlob.size / (1024 * 1024);
+      
+      if (fileSizeMB > MAX_PDF_SIZE_MB) {
+        // If file is too large, regenerate with lower quality
+        console.warn(`PDF size (${fileSizeMB.toFixed(2)}MB) exceeds ${MAX_PDF_SIZE_MB}MB. Regenerating with lower quality...`);
+        
+        // Regenerate with lower quality
+        const lowerQuality = 0.7;
+        const lowerScale = 1.2;
+        
+        // Re-capture with lower settings
+        const lowerCanvas = await html2canvas(element, {
+          scale: lowerScale,
+          useCORS: true,
+          logging: false,
+          width: element.scrollWidth,
+          height: element.scrollHeight,
+          windowWidth: element.scrollWidth,
+          windowHeight: element.scrollHeight,
+          allowTaint: true,
+          removeContainer: false,
+          scrollX: 0,
+          scrollY: 0,
+        });
+
+        // Create new PDF with lower quality
+        const newPdf = new jsPDF("p", "mm", "a4");
+        const newActualWidthPx = lowerCanvas.width / lowerScale;
+        const newActualHeightPx = lowerCanvas.height / lowerScale;
+        const newWidthMm = newActualWidthPx * PX_TO_MM;
+        const newHeightMm = newActualHeightPx * PX_TO_MM;
+        const newScaleFactor = availableWidth / newWidthMm;
+        const newScaledHeight = newHeightMm * newScaleFactor;
+
+        if (newScaledHeight <= availableHeight * 1.1) {
+          const imgData = lowerCanvas.toDataURL("image/jpeg", lowerQuality);
+          newPdf.addImage(
+            imgData,
+            "JPEG",
+            marginLeft,
+            marginTop,
+            availableWidth,
+            newScaledHeight
+          );
+        } else {
+          // Use splitCanvasToPages with lower quality settings
+          // Temporarily modify createPageCanvas to use lower quality
+          const originalCreatePageCanvas = createPageCanvas;
+          const createPageCanvasLowerQuality = (sourceCanvas, sourceY, sourceHeight) => {
+            const pageCanvas = document.createElement("canvas");
+            pageCanvas.width = sourceCanvas.width;
+            pageCanvas.height = Math.ceil(sourceHeight);
+            const pageCtx = pageCanvas.getContext("2d");
+            pageCtx.fillStyle = "#ffffff";
+            pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+            pageCtx.drawImage(
+              sourceCanvas,
+              0,
+              sourceY,
+              sourceCanvas.width,
+              sourceHeight,
+              0,
+              0,
+              sourceCanvas.width,
+              sourceHeight
+            );
+            return pageCanvas.toDataURL("image/jpeg", lowerQuality);
+          };
+          
+          // Temporarily override CANVAS_SCALE for this operation
+          const originalScale = CANVAS_SCALE;
+          // Use a modified split function
+          const splitWithLowerQuality = (canvas, pdf, scale) => {
+            const pageOverlap = Math.floor((5 / scale / PX_TO_MM) * lowerScale);
+            let sourceY = 0;
+            let pageNumber = 0;
+            const MAX_PAGES = 100;
+            
+            while (sourceY < canvas.height && pageNumber < MAX_PAGES) {
+              if (pageNumber > 0) pdf.addPage();
+              
+              const remainingCanvasPixels = canvas.height - sourceY;
+              const canvasPixelsPerPage = Math.floor((availableHeight / scale / PX_TO_MM) * lowerScale);
+              const isLastPage = remainingCanvasPixels <= canvasPixelsPerPage * 1.2;
+              
+              let sourceHeight = isLastPage ? remainingCanvasPixels : (canvasPixelsPerPage + pageOverlap);
+              sourceHeight = Math.min(sourceHeight, canvas.height - sourceY);
+              
+              if (sourceY >= canvas.height || sourceHeight <= 0) break;
+              
+              const pageImgData = createPageCanvasLowerQuality(canvas, sourceY, sourceHeight);
+              const displayHeight = isLastPage 
+                ? (sourceHeight / lowerScale) * PX_TO_MM * scale
+                : availableHeight;
+              
+              newPdf.addImage(pageImgData, "JPEG", marginLeft, marginTop, availableWidth, displayHeight);
+              
+              sourceY += sourceHeight - (pageNumber > 0 ? pageOverlap : 0);
+              pageNumber++;
+            }
+          };
+          
+          splitWithLowerQuality(lowerCanvas, newPdf, newScaleFactor);
+        }
+        
+        newPdf.save("Resume-Preview.pdf");
+        const finalSizeMB = (newPdf.output('blob').size / (1024 * 1024)).toFixed(2);
+        showSnackbar(`PDF downloaded successfully! (${finalSizeMB}MB)`, "success");
+      } else {
+        // Save PDF
+        pdf.save("Resume-Preview.pdf");
+        showSnackbar(`PDF downloaded successfully! (${fileSizeMB.toFixed(2)}MB)`, "success");
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
       showSnackbar(
@@ -1268,7 +1353,37 @@ const ResumePreview = ({
       }}
     >
       <DialogTitle id="alert-dialog-title">
-        Resume Preview
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pr: 6 }}>
+          <Typography variant="h6" component="span">
+            Resume Preview
+          </Typography>
+          {(() => {
+            const atsScore = calculateATSScore(formData);
+            const getScoreColor = (percentage) => {
+              if (percentage >= 80) return '#4caf50'; // Green
+              if (percentage >= 60) return '#ff9800'; // Orange
+              return '#f44336'; // Red
+            };
+            const getScoreLabel = (percentage) => {
+              if (percentage >= 80) return 'Excellent';
+              if (percentage >= 60) return 'Good';
+              if (percentage >= 40) return 'Fair';
+              return 'Needs Improvement';
+            };
+            return (
+              <Chip
+                label={`ATS Score: ${atsScore.percentage}% (${getScoreLabel(atsScore.percentage)})`}
+                sx={{
+                  backgroundColor: getScoreColor(atsScore.percentage),
+                  color: 'white',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                }}
+                size="small"
+              />
+            );
+          })()}
+        </Box>
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -1288,6 +1403,34 @@ const ResumePreview = ({
           bgcolor: "#f5f5f5",
         }}
       >
+        {(() => {
+          const atsScore = calculateATSScore(formData);
+          if (atsScore.feedback.length > 0 && atsScore.percentage < 80) {
+            return (
+              <Box sx={{ mb: 2 }}>
+                <Alert 
+                  severity={atsScore.percentage >= 60 ? "info" : "warning"}
+                  sx={{ mb: 2 }}
+                >
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1 }}>
+                    ATS Score: {atsScore.percentage}% ({atsScore.score}/{atsScore.maxScore} points)
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 1 }}>
+                    <strong>Improvement Suggestions:</strong>
+                  </Typography>
+                  <Box component="ul" sx={{ m: 0, pl: 2 }}>
+                    {atsScore.feedback.map((item, idx) => (
+                      <Typography key={idx} component="li" variant="body2" sx={{ mb: 0.5 }}>
+                        {item}
+                      </Typography>
+                    ))}
+                  </Box>
+                </Alert>
+              </Box>
+            );
+          }
+          return null;
+        })()}
         <Box id="resume-preview-content">{resumeContent}</Box>
       </DialogContent>
       <DialogActions className="dialog-actions-bar">

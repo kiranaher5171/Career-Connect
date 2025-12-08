@@ -12,8 +12,10 @@ const PDF_CONFIG = {
 };
 
 const PX_TO_MM = 0.264583; // 1px = 0.264583mm at 96dpi
-const CANVAS_SCALE = 2; // html2canvas scale factor
+const CANVAS_SCALE = 1.5; // html2canvas scale factor (reduced from 2 to optimize file size)
 const RENDER_DELAY = 200; // ms delay for rendering
+const MAX_PDF_SIZE_MB = 3; // Maximum PDF file size in MB
+const IMAGE_QUALITY = 0.85; // Image quality (0.85 for good quality with smaller file size)
 
 /**
  * Prepares the element for PDF generation
@@ -57,7 +59,8 @@ const createPageCanvas = (sourceCanvas, sourceY, sourceHeight) => {
     sourceCanvas.width, sourceHeight
   );
   
-  return pageCanvas.toDataURL('image/png', 1.0);
+  // Use JPEG format with quality for better compression and smaller file size
+  return pageCanvas.toDataURL('image/jpeg', IMAGE_QUALITY);
 };
 
 /**
@@ -138,7 +141,7 @@ const splitCanvasToPages = (canvas, pdf, scaleFactor) => {
       ? (sourceHeight / CANVAS_SCALE) * PX_TO_MM * scale
       : pageImageHeight;
     
-    pdf.addImage(pageImgData, 'PNG', xOffset, marginTop, scaledWidth, displayHeight);
+    pdf.addImage(pageImgData, 'JPEG', xOffset, marginTop, scaledWidth, displayHeight);
     
     // Move to next position in canvas pixels
     sourceY += sourceHeight;
@@ -156,7 +159,7 @@ const splitCanvasToPages = (canvas, pdf, scaleFactor) => {
       pdf.addPage();
       const finalPageImgData = createPageCanvas(canvas, sourceY, finalRemaining);
       const finalPageHeight = (finalRemaining / CANVAS_SCALE) * PX_TO_MM * scale;
-      pdf.addImage(finalPageImgData, 'PNG', xOffset, marginTop, scaledWidth, finalPageHeight);
+      pdf.addImage(finalPageImgData, 'JPEG', xOffset, marginTop, scaledWidth, finalPageHeight);
       break;
     }
   }
@@ -244,17 +247,98 @@ export const usePDFDownload = (formData, showSnackbar) => {
       
       // Create PDF and split across pages
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const { marginLeft, marginRight, pageWidth } = PDF_CONFIG;
+      const { marginLeft, marginRight, marginTop, pageWidth, pageHeight } = PDF_CONFIG;
       const availableWidth = pageWidth - marginLeft - marginRight;
+      const availableHeight = pageHeight - marginTop - PDF_CONFIG.marginBottom;
       const actualWidthPx = canvas.width / CANVAS_SCALE;
       const widthMm = actualWidthPx * PX_TO_MM;
       const scaleFactor = availableWidth / widthMm;
       
       splitCanvasToPages(canvas, pdf, scaleFactor);
 
-      // Save PDF
-      pdf.save(`${fileName}.pdf`);
-      showSnackbar("PDF downloaded successfully!", "success");
+      // Check PDF size and optimize if needed
+      const pdfBlob = pdf.output('blob');
+      const fileSizeMB = pdfBlob.size / (1024 * 1024);
+      
+      if (fileSizeMB > MAX_PDF_SIZE_MB) {
+        // If file is too large, regenerate with lower quality
+        console.warn(`PDF size (${fileSizeMB.toFixed(2)}MB) exceeds ${MAX_PDF_SIZE_MB}MB. Regenerating with lower quality...`);
+        
+        // Regenerate with lower quality
+        const lowerQuality = 0.7;
+        const lowerScale = 1.2;
+        
+        // Re-capture with lower settings
+        const lowerCanvas = await html2canvas(element, {
+          scale: lowerScale,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+          width: element.scrollWidth,
+          height: element.scrollHeight,
+          windowWidth: element.scrollWidth,
+          windowHeight: element.scrollHeight,
+          allowTaint: true,
+          removeContainer: false,
+          scrollX: 0,
+          scrollY: 0,
+        });
+
+        // Create new PDF with lower quality
+        const newPdf = new jsPDF('p', 'mm', 'a4');
+        const newActualWidthPx = lowerCanvas.width / lowerScale;
+        const newWidthMm = newActualWidthPx * PX_TO_MM;
+        const newScaleFactor = availableWidth / newWidthMm;
+        
+        // Use modified split function with lower quality
+        const splitWithLowerQuality = (canvas, pdf, scale) => {
+          const pageOverlap = Math.floor((5 / scale / PX_TO_MM) * lowerScale);
+          let sourceY = 0;
+          let pageNumber = 0;
+          const MAX_PAGES = 100;
+          
+          while (sourceY < canvas.height && pageNumber < MAX_PAGES) {
+            if (pageNumber > 0) pdf.addPage();
+            
+            const remainingCanvasPixels = canvas.height - sourceY;
+            const canvasPixelsPerPage = Math.floor((availableHeight / scale / PX_TO_MM) * lowerScale);
+            const isLastPage = remainingCanvasPixels <= canvasPixelsPerPage * 1.2;
+            
+            let sourceHeight = isLastPage ? remainingCanvasPixels : (canvasPixelsPerPage + pageOverlap);
+            sourceHeight = Math.min(sourceHeight, canvas.height - sourceY);
+            
+            if (sourceY >= canvas.height || sourceHeight <= 0) break;
+            
+            const pageCanvas = document.createElement('canvas');
+            pageCanvas.width = canvas.width;
+            pageCanvas.height = Math.ceil(sourceHeight);
+            const pageCtx = pageCanvas.getContext('2d');
+            pageCtx.fillStyle = '#ffffff';
+            pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+            pageCtx.drawImage(canvas, 0, sourceY, canvas.width, sourceHeight, 0, 0, canvas.width, sourceHeight);
+            
+            const pageImgData = pageCanvas.toDataURL('image/jpeg', lowerQuality);
+            const displayHeight = isLastPage 
+              ? (sourceHeight / lowerScale) * PX_TO_MM * scale
+              : availableHeight;
+            
+            pdf.addImage(pageImgData, 'JPEG', marginLeft, marginTop, availableWidth, displayHeight);
+            
+            sourceY += sourceHeight - (pageNumber > 0 ? pageOverlap : 0);
+            pageNumber++;
+          }
+        };
+        
+        splitWithLowerQuality(lowerCanvas, newPdf, newScaleFactor);
+        
+        newPdf.save(`${fileName}.pdf`);
+        const finalSizeMB = (newPdf.output('blob').size / (1024 * 1024)).toFixed(2);
+        showSnackbar(`PDF downloaded successfully! (${finalSizeMB}MB)`, "success");
+      } else {
+        // Save PDF
+        pdf.save(`${fileName}.pdf`);
+        showSnackbar(`PDF downloaded successfully! (${fileSizeMB.toFixed(2)}MB)`, "success");
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
       showSnackbar(

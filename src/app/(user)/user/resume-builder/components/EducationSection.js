@@ -1,6 +1,9 @@
 "use client";
 import React from "react";
 import { Box, Grid, TextField, Button, Typography, IconButton } from "@mui/material";
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import SectionCard from "./SectionCard";
@@ -101,28 +104,44 @@ const EducationSection = ({
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Box className="textfield auto-complete">
-                  <TextField
-                    fullWidth
-                    label="Start Date"
-                    type="month"
-                    value={edu.startDate || ""}
-                    onChange={(e) =>
-                      handleArrayChange("education", index, "startDate", e.target.value)
-                    }
-                  />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Start Date"
+                      views={['year', 'month']}
+                      format="MM/YYYY"
+                      value={edu.startDate ? dayjs(edu.startDate) : null}
+                      onChange={(newValue) => {
+                        const dateValue = newValue ? newValue.format('YYYY-MM') : '';
+                        handleArrayChange("education", index, "startDate", dateValue);
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
                 </Box>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Box className="textfield auto-complete">
-                  <TextField
-                    fullWidth
-                    label="End Date / Graduation Date"
-                    type="month"
-                    value={edu.endDate || ""}
-                    onChange={(e) =>
-                      handleArrayChange("education", index, "endDate", e.target.value)
-                    }
-                  />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="End Date / Graduation Date"
+                      views={['year', 'month']}
+                      format="MM/YYYY"
+                      value={edu.endDate ? dayjs(edu.endDate) : null}
+                      onChange={(newValue) => {
+                        const dateValue = newValue ? newValue.format('YYYY-MM') : '';
+                        handleArrayChange("education", index, "endDate", dateValue);
+                      }}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                        },
+                      }}
+                    />
+                  </LocalizationProvider>
                 </Box>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
