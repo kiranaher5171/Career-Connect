@@ -355,18 +355,15 @@ const ResumePreview = ({
       // Clean up temporary element
       document.body.removeChild(element);
 
-      // Create PDF and split across pages
-      const pdf = new jsPDF("p", "mm", "a4");
+      // Calculate dimensions
       const {
         marginLeft,
         marginRight,
         marginTop,
         marginBottom,
         pageWidth,
-        pageHeight,
       } = PDF_CONFIG;
       const availableWidth = pageWidth - marginLeft - marginRight;
-      const availableHeight = pageHeight - marginTop - marginBottom;
       const actualWidthPx = canvas.width / CANVAS_SCALE;
       const actualHeightPx = canvas.height / CANVAS_SCALE;
       const widthMm = actualWidthPx * PX_TO_MM;
@@ -376,22 +373,25 @@ const ResumePreview = ({
       const scaleFactor = availableWidth / widthMm;
       const scaledHeight = heightMm * scaleFactor;
 
-      // Try to fit on single page first if content is not too large
-      if (scaledHeight <= availableHeight * 1.1) {
-        // Content fits on one page (with 10% tolerance)
-        const imgData = canvas.toDataURL("image/jpeg", IMAGE_QUALITY);
-        pdf.addImage(
-          imgData,
-          "JPEG",
-          marginLeft,
-          marginTop,
-          availableWidth,
-          scaledHeight
-        );
-      } else {
-        // Content is too large, split across pages
-        splitCanvasToPages(canvas, pdf, scaleFactor);
-      }
+      // Create PDF with custom page size - single page with dynamic height
+      // Page width: A4 width (210mm), Page height: content height + margins
+      const totalPageHeight = scaledHeight + marginTop + marginBottom;
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: [pageWidth, totalPageHeight], // Custom page size: width x dynamic height
+      });
+
+      // Add image to single page
+      const imgData = canvas.toDataURL("image/jpeg", IMAGE_QUALITY);
+      pdf.addImage(
+        imgData,
+        "JPEG",
+        marginLeft,
+        marginTop,
+        availableWidth,
+        scaledHeight
+      );
 
       // Check PDF size and optimize if needed
       const pdfBlob = pdf.output('blob');
@@ -420,8 +420,7 @@ const ResumePreview = ({
           scrollY: 0,
         });
 
-        // Create new PDF with lower quality
-        const newPdf = new jsPDF("p", "mm", "a4");
+        // Calculate new dimensions for single page with lower quality
         const newActualWidthPx = lowerCanvas.width / lowerScale;
         const newActualHeightPx = lowerCanvas.height / lowerScale;
         const newWidthMm = newActualWidthPx * PX_TO_MM;
@@ -429,76 +428,23 @@ const ResumePreview = ({
         const newScaleFactor = availableWidth / newWidthMm;
         const newScaledHeight = newHeightMm * newScaleFactor;
 
-        if (newScaledHeight <= availableHeight * 1.1) {
-          const imgData = lowerCanvas.toDataURL("image/jpeg", lowerQuality);
-          newPdf.addImage(
-            imgData,
-            "JPEG",
-            marginLeft,
-            marginTop,
-            availableWidth,
-            newScaledHeight
-          );
-        } else {
-          // Use splitCanvasToPages with lower quality settings
-          // Temporarily modify createPageCanvas to use lower quality
-          const originalCreatePageCanvas = createPageCanvas;
-          const createPageCanvasLowerQuality = (sourceCanvas, sourceY, sourceHeight) => {
-            const pageCanvas = document.createElement("canvas");
-            pageCanvas.width = sourceCanvas.width;
-            pageCanvas.height = Math.ceil(sourceHeight);
-            const pageCtx = pageCanvas.getContext("2d");
-            pageCtx.fillStyle = "#ffffff";
-            pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-            pageCtx.drawImage(
-              sourceCanvas,
-              0,
-              sourceY,
-              sourceCanvas.width,
-              sourceHeight,
-              0,
-              0,
-              sourceCanvas.width,
-              sourceHeight
-            );
-            return pageCanvas.toDataURL("image/jpeg", lowerQuality);
-          };
-          
-          // Temporarily override CANVAS_SCALE for this operation
-          const originalScale = CANVAS_SCALE;
-          // Use a modified split function
-          const splitWithLowerQuality = (canvas, pdf, scale) => {
-            const pageOverlap = Math.floor((5 / scale / PX_TO_MM) * lowerScale);
-            let sourceY = 0;
-            let pageNumber = 0;
-            const MAX_PAGES = 100;
-            
-            while (sourceY < canvas.height && pageNumber < MAX_PAGES) {
-              if (pageNumber > 0) pdf.addPage();
-              
-              const remainingCanvasPixels = canvas.height - sourceY;
-              const canvasPixelsPerPage = Math.floor((availableHeight / scale / PX_TO_MM) * lowerScale);
-              const isLastPage = remainingCanvasPixels <= canvasPixelsPerPage * 1.2;
-              
-              let sourceHeight = isLastPage ? remainingCanvasPixels : (canvasPixelsPerPage + pageOverlap);
-              sourceHeight = Math.min(sourceHeight, canvas.height - sourceY);
-              
-              if (sourceY >= canvas.height || sourceHeight <= 0) break;
-              
-              const pageImgData = createPageCanvasLowerQuality(canvas, sourceY, sourceHeight);
-              const displayHeight = isLastPage 
-                ? (sourceHeight / lowerScale) * PX_TO_MM * scale
-                : availableHeight;
-              
-              newPdf.addImage(pageImgData, "JPEG", marginLeft, marginTop, availableWidth, displayHeight);
-              
-              sourceY += sourceHeight - (pageNumber > 0 ? pageOverlap : 0);
-              pageNumber++;
-            }
-          };
-          
-          splitWithLowerQuality(lowerCanvas, newPdf, newScaleFactor);
-        }
+        // Create new PDF with lower quality and custom page size
+        const newTotalPageHeight = newScaledHeight + marginTop + marginBottom;
+        const newPdf = new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: [pageWidth, newTotalPageHeight], // Custom page size
+        });
+
+        const imgData = lowerCanvas.toDataURL("image/jpeg", lowerQuality);
+        newPdf.addImage(
+          imgData,
+          "JPEG",
+          marginLeft,
+          marginTop,
+          availableWidth,
+          newScaledHeight
+        );
         
         newPdf.save("Resume-Preview.pdf");
         const finalSizeMB = (newPdf.output('blob').size / (1024 * 1024)).toFixed(2);

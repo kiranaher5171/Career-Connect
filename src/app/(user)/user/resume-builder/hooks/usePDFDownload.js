@@ -245,16 +245,36 @@ export const usePDFDownload = (formData, showSnackbar) => {
       // Clean up temporary element
       document.body.removeChild(element);
       
-      // Create PDF and split across pages
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const { marginLeft, marginRight, marginTop, pageWidth, pageHeight } = PDF_CONFIG;
+      // Calculate dimensions for single page with dynamic height
+      const { marginLeft, marginRight, marginTop, marginBottom, pageWidth } = PDF_CONFIG;
       const availableWidth = pageWidth - marginLeft - marginRight;
-      const availableHeight = pageHeight - marginTop - PDF_CONFIG.marginBottom;
       const actualWidthPx = canvas.width / CANVAS_SCALE;
+      const actualHeightPx = canvas.height / CANVAS_SCALE;
       const widthMm = actualWidthPx * PX_TO_MM;
-      const scaleFactor = availableWidth / widthMm;
+      const heightMm = actualHeightPx * PX_TO_MM;
       
-      splitCanvasToPages(canvas, pdf, scaleFactor);
+      // Calculate scale to fit width
+      const scaleFactor = availableWidth / widthMm;
+      const scaledHeight = heightMm * scaleFactor;
+      
+      // Create PDF with custom page size - single page with dynamic height
+      const totalPageHeight = scaledHeight + marginTop + marginBottom;
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [pageWidth, totalPageHeight], // Custom page size: width x dynamic height
+      });
+      
+      // Add image to single page
+      const imgData = canvas.toDataURL('image/jpeg', IMAGE_QUALITY);
+      pdf.addImage(
+        imgData,
+        'JPEG',
+        marginLeft,
+        marginTop,
+        availableWidth,
+        scaledHeight
+      );
 
       // Check PDF size and optimize if needed
       const pdfBlob = pdf.output('blob');
@@ -284,52 +304,31 @@ export const usePDFDownload = (formData, showSnackbar) => {
           scrollY: 0,
         });
 
-        // Create new PDF with lower quality
-        const newPdf = new jsPDF('p', 'mm', 'a4');
+        // Calculate new dimensions for single page with lower quality
         const newActualWidthPx = lowerCanvas.width / lowerScale;
+        const newActualHeightPx = lowerCanvas.height / lowerScale;
         const newWidthMm = newActualWidthPx * PX_TO_MM;
+        const newHeightMm = newActualHeightPx * PX_TO_MM;
         const newScaleFactor = availableWidth / newWidthMm;
-        
-        // Use modified split function with lower quality
-        const splitWithLowerQuality = (canvas, pdf, scale) => {
-          const pageOverlap = Math.floor((5 / scale / PX_TO_MM) * lowerScale);
-          let sourceY = 0;
-          let pageNumber = 0;
-          const MAX_PAGES = 100;
-          
-          while (sourceY < canvas.height && pageNumber < MAX_PAGES) {
-            if (pageNumber > 0) pdf.addPage();
-            
-            const remainingCanvasPixels = canvas.height - sourceY;
-            const canvasPixelsPerPage = Math.floor((availableHeight / scale / PX_TO_MM) * lowerScale);
-            const isLastPage = remainingCanvasPixels <= canvasPixelsPerPage * 1.2;
-            
-            let sourceHeight = isLastPage ? remainingCanvasPixels : (canvasPixelsPerPage + pageOverlap);
-            sourceHeight = Math.min(sourceHeight, canvas.height - sourceY);
-            
-            if (sourceY >= canvas.height || sourceHeight <= 0) break;
-            
-            const pageCanvas = document.createElement('canvas');
-            pageCanvas.width = canvas.width;
-            pageCanvas.height = Math.ceil(sourceHeight);
-            const pageCtx = pageCanvas.getContext('2d');
-            pageCtx.fillStyle = '#ffffff';
-            pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-            pageCtx.drawImage(canvas, 0, sourceY, canvas.width, sourceHeight, 0, 0, canvas.width, sourceHeight);
-            
-            const pageImgData = pageCanvas.toDataURL('image/jpeg', lowerQuality);
-            const displayHeight = isLastPage 
-              ? (sourceHeight / lowerScale) * PX_TO_MM * scale
-              : availableHeight;
-            
-            pdf.addImage(pageImgData, 'JPEG', marginLeft, marginTop, availableWidth, displayHeight);
-            
-            sourceY += sourceHeight - (pageNumber > 0 ? pageOverlap : 0);
-            pageNumber++;
-          }
-        };
-        
-        splitWithLowerQuality(lowerCanvas, newPdf, newScaleFactor);
+        const newScaledHeight = newHeightMm * newScaleFactor;
+
+        // Create new PDF with lower quality and custom page size
+        const newTotalPageHeight = newScaledHeight + marginTop + marginBottom;
+        const newPdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: [pageWidth, newTotalPageHeight], // Custom page size
+        });
+
+        const imgData = lowerCanvas.toDataURL('image/jpeg', lowerQuality);
+        newPdf.addImage(
+          imgData,
+          'JPEG',
+          marginLeft,
+          marginTop,
+          availableWidth,
+          newScaledHeight
+        );
         
         newPdf.save(`${fileName}.pdf`);
         const finalSizeMB = (newPdf.output('blob').size / (1024 * 1024)).toFixed(2);
