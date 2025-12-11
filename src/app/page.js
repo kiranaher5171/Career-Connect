@@ -8,7 +8,7 @@ import {
     WhyJoinUs,
     TestimonialsSection
 } from '@/components/features/home';
-import HeaderFooterLayout from '@/components/layouts/header-footer-layout/HeaderFooterLayout';
+ import HeaderFooterLayout from '@/components/layouts/header-footer-layout/HeaderFooterLayout';
 import React from 'react'
 
 const page = () => {
@@ -16,7 +16,7 @@ const page = () => {
         <>
             <HeaderFooterLayout>
                 <HeroSection />
-                <FeaturedJobs />
+                 <FeaturedJobs />
                 <JobCategories />
                 <HowItWorks />
                 <StatisticsSection />
