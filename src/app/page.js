@@ -6,7 +6,8 @@ import {
     HowItWorks,
     StatisticsSection,
     WhyJoinUs,
-    TestimonialsSection
+    TestimonialsSection,
+    AboutUs
 } from '@/components/features/home';
  import HeaderFooterLayout from '@/components/layouts/header-footer-layout/HeaderFooterLayout';
 import React from 'react'
@@ -16,6 +17,7 @@ const page = () => {
         <>
             <HeaderFooterLayout>
                 <HeroSection />
+                <AboutUs/>
                  <FeaturedJobs />
                 <JobCategories />
                 <HowItWorks />
