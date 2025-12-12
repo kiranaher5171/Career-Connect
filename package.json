@@ -20,9 +20,10 @@
     "bcryptjs": "^3.0.3",
     "dayjs": "^1.11.12",
     "jsonwebtoken": "^9.0.2",
+    "jspdf": "^3.0.2",
     "jspdf-html2canvas": "^1.5.2",
     "mongodb": "^7.0.0",
-    "next": "^15.3.6",
+    "next": "^15.4.10",
     "pdfjs-dist": "^5.4.449",
     "react": "^19.1.2",
     "react-dom": "^19.1.2",
@@ -47,5 +48,9 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-html-reporter": "^3.10.2",
     "jest-transform-stub": "^2.0.0"
+  },
+  "overrides": {
+    "jspdf": "^3.0.2",
+    "jws": "^3.2.3"
   }
 }
