@@ -7,7 +7,7 @@ import {
     StatisticsSection,
     WhyJoinUs,
     TestimonialsSection,
-    AboutUs
+    // AboutUs
 } from '@/components/features/home';
  import HeaderFooterLayout from '@/components/layouts/header-footer-layout/HeaderFooterLayout';
 import React from 'react'
@@ -17,7 +17,7 @@ const page = () => {
         <>
             <HeaderFooterLayout>
                 <HeroSection />
-                <AboutUs/>
+                {/* <AboutUs/> */}
                  <FeaturedJobs />
                 <JobCategories />
                 <HowItWorks />
